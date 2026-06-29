@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!-- cn-v1.0 -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>Cabin Network — Cabin Crew Jobs Board</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  margin: 0 !important; padding: 0 !important;
+  min-height: 100%; width: 100%;
+  background: #02040a;
+  overflow-x: hidden;
+}
+@keyframes fadeUp { from { opacity: 0; transform: translateY(26px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes cardFloat { 0%, 100% { translate: 0 0; } 50% { translate: 0 -8px; } }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes islandDrop { from { transform: translateY(-30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+@keyframes islandGlow { 0%, 100% { opacity: .3; } 50% { opacity: .75; } }
+
+:root {
+  --cn-bg: #02040a; --cn-text: #f8fbff; --cn-muted: #9da8ba; --cn-soft: #c8d2e3;
+  --cn-line: rgba(255,255,255,.12); --cn-line-strong: rgba(255,138,160,.42);
+  /* Cabin Network usa rosa/magenta en lugar de azul/morado de pilotos */
+  --cn-pink: #ff6fa8; --cn-rose: #ff8ab0; --cn-purple: #c56bff; --cn-gold: #ffca7d;
+  --cn-green: #7dffba;
+  --cn-shadow: 0 28px 90px rgba(0,0,0,.55); --cn-shadow-soft: 0 14px 42px rgba(0,0,0,.35);
+  --cn-radius-xl: 24px; --cn-radius-md: 15px; --cn-maxw: 1320px;
+}
+
+html, body {
+  background-color: #02040a !important;
+  background-image:
+    radial-gradient(circle at 50% -8%, rgba(255,111,168,.28), transparent 38%),
+    radial-gradient(circle at 88% 18%, rgba(197,107,255,.18), transparent 32%),
+    radial-gradient(circle at 8% 38%, rgba(255,202,125,.10), transparent 30%),
+    linear-gradient(180deg, #02040a 0%, #0d060f 45%, #02040a 100%),
+    linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px) !important;
+  background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%, 72px 72px, 72px 72px !important;
+  background-position: center top, center center, center center, center center, 0 0, 0 0 !important;
+  background-repeat: no-repeat, no-repeat, no-repeat, no-repeat, repeat, repeat !important;
+  overflow-x: hidden !important;
+}
+
+main, .jw-body, .jw-page, .jw-content, .jw-section, .jw-container,
+.jw-element, .jw-element-content, .jw-html-content,
+.block-content, .content, .wrapper { background: transparent !important; background-color: transparent !important; background-image: none !important; }
+section { margin: 0 !important; padding: 0 !important; }
+.cn-section { background: transparent !important; margin-top: 0 !important; margin-bottom: 0 !important; }
+.jw-html-content, .jw-element-content, .block-content { padding-top: 0 !important; padding-bottom: 0 !important; margin-top: 0 !important; margin-bottom: 0 !important; }
+
+.cn-section {
+  width: 100vw; max-width: 100vw;
+  margin-left: calc(50% - 50vw); margin-right: calc(50% - 50vw);
+  position: relative; isolation: isolate; overflow: hidden;
+  color: var(--cn-text);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  padding: 72px 22px 100px;
+}
+.cn-section, .cn-section *, .cn-section *::before, .cn-section *::after { box-sizing: border-box; }
+
+.cn-inner { width: 100%; max-width: var(--cn-maxw); margin: 0 auto; position: relative; z-index: 2; }
+
+/* ── LANG ISLAND ── */
+.cn-lang-top { position: sticky; top: 14px; z-index: 120; display: flex; justify-content: center; align-items: center; margin: 0 auto 28px; pointer-events: none; }
+.cn-lang-island { pointer-events: auto; display: inline-flex; align-items: center; gap: 6px; padding: 6px; background: rgba(8,12,22,.78); backdrop-filter: blur(22px) saturate(1.4); -webkit-backdrop-filter: blur(22px) saturate(1.4); border: 1px solid rgba(255,255,255,.13); border-radius: 999px; box-shadow: 0 14px 40px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.08); position: relative; flex-shrink: 0; animation: islandDrop .8s cubic-bezier(.2,1.2,.3,1) both; }
+.cn-lang-island::before { content: ""; position: absolute; inset: -2px; border-radius: 999px; background: linear-gradient(135deg, rgba(255,111,168,.55), transparent 40%, rgba(197,107,255,.45)); filter: blur(14px); opacity: .4; z-index: -1; animation: islandGlow 4s ease-in-out infinite; }
+.cn-flag-btn { position: relative; display: flex; align-items: center; gap: 0; padding: 6px; border: none; background: transparent; border-radius: 999px; cursor: pointer; color: #fff; font-family: inherit; font-weight: 900; font-size: 13px; letter-spacing: 1.2px; overflow: hidden; transition: all .4s cubic-bezier(.4,.2,.2,1); max-width: 44px; }
+.cn-flag-btn .cn-flag { flex-shrink: 0; width: 28px; height: 28px; border-radius: 50%; overflow: hidden; display: block; box-shadow: 0 0 0 1px rgba(255,255,255,.18), 0 4px 10px rgba(0,0,0,.4); transition: transform .4s ease; }
+.cn-flag-btn .cn-flag svg { width: 100%; height: 100%; display: block; }
+.cn-flag-btn .cn-label { display: inline-block; max-width: 0; opacity: 0; white-space: nowrap; transition: all .4s cubic-bezier(.4,.2,.2,1); }
+.cn-flag-btn.active { background: linear-gradient(135deg, #fff, #ffd0e4); color: #02040a; max-width: 130px; padding-right: 14px; box-shadow: 0 6px 20px rgba(255,111,168,.35); }
+.cn-flag-btn.active .cn-flag { transform: scale(1.05); }
+.cn-flag-btn.active .cn-label { max-width: 80px; opacity: 1; padding-left: 8px; }
+.cn-flag-btn:not(.active):hover .cn-flag { transform: scale(1.12) rotate(-4deg); }
+
+/* lang spans */
+.lang-en { display: none; }
+.lang-es { display: inline; }
+body.cn-lang-en .lang-en, .cn-root.cn-lang-en .lang-en { display: inline; }
+body.cn-lang-en .lang-es, .cn-root.cn-lang-en .lang-es { display: none; }
+.reqs-lang-en { display: none; }
+.reqs-lang-es { display: block; }
+body.cn-lang-en .reqs-lang-en, .cn-root.cn-lang-en .reqs-lang-en { display: block; }
+body.cn-lang-en .reqs-lang-es, .cn-root.cn-lang-en .reqs-lang-es { display: none; }
+
+/* ── HERO ── */
+.cn-hero { max-width: 920px; margin: 0 auto 42px; text-align: center; animation: fadeUp .8s ease both; animation-delay: .15s; }
+.cn-kicker { display: inline-flex; align-items: center; gap: 8px; margin-bottom: 16px; padding: 8px 14px; border: 1px solid rgba(255,111,168,.28); border-radius: 999px; background: rgba(255,111,168,.08); color: var(--cn-pink); font-size: 12px; font-weight: 900; letter-spacing: 1.8px; text-transform: uppercase; }
+.cn-title-main { margin: 0; font-size: clamp(38px, 6vw, 76px); line-height: .95; letter-spacing: -3px; font-weight: 950; }
+.cn-title-main span { background: linear-gradient(180deg, #ffffff 0%, #ffb0d0 100%); -webkit-background-clip: text; color: transparent; }
+.cn-subtitle { max-width: 720px; margin: 20px auto 0; color: var(--cn-muted); font-size: 17px; line-height: 1.75; }
+
+/* ── CONTROLS ── */
+.cn-controls { max-width: var(--cn-maxw); margin: 0 auto 28px; display: flex; flex-direction: column; gap: 16px; animation: fadeUp .6s ease both; }
+
+.cn-tabs { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+.cn-tab { border: 1px solid rgba(255,255,255,.14); background: rgba(255,255,255,.055); color: #f8fbff; border-radius: 999px; min-height: 42px; padding: 10px 22px; font-size: 13px; font-weight: 900; letter-spacing: .6px; text-transform: uppercase; cursor: pointer; transition: .22s ease; display: inline-flex; align-items: center; gap: 8px; }
+.cn-tab:hover { background: rgba(255,255,255,.1); }
+.cn-tab.active { background: linear-gradient(180deg, #fff, #ffd0e4); color: #02040a; border-color: rgba(255,255,255,.75); box-shadow: 0 12px 26px rgba(255,111,168,.2); }
+.cn-tab .cn-tab-count { font-size: 11px; opacity: .7; font-weight: 700; }
+.cn-tab-new { display: none; background: var(--cn-green); color: #000; border-radius: 999px; font-size: 9px; font-weight: 900; padding: 2px 7px; letter-spacing: .3px; margin-left: 4px; vertical-align: middle; }
+
+.cn-search-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; justify-content: center; }
+.cn-search-box { position: relative; flex: 1 1 340px; max-width: 480px; }
+.cn-search-box svg { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); width: 18px; height: 18px; fill: var(--cn-muted); pointer-events: none; }
+.cn-search-input { width: 100%; height: 50px; border-radius: 14px; border: 1px solid rgba(255,255,255,.14); background: rgba(255,255,255,.06); color: #fff; font-size: 15px; font-family: inherit; padding: 0 18px 0 46px; transition: .2s ease; }
+.cn-search-input::placeholder { color: var(--cn-muted); }
+.cn-search-input:focus { outline: none; border-color: var(--cn-pink); background: rgba(255,111,168,.08); box-shadow: 0 0 0 4px rgba(255,111,168,.12); }
+
+.cn-filters-row { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; align-items: center; }
+.cn-chip { border: 1px solid rgba(255,255,255,.14); background: rgba(255,255,255,.055); color: #f8fbff; border-radius: 999px; min-height: 38px; padding: 8px 16px; font-size: 12px; font-weight: 900; letter-spacing: .5px; text-transform: uppercase; cursor: pointer; transition: .2s ease; }
+.cn-chip:hover { background: rgba(255,255,255,.1); }
+.cn-chip.active { background: linear-gradient(180deg, #fff, #ffd0e4); color: #02040a; border-color: rgba(255,255,255,.75); box-shadow: 0 10px 22px rgba(255,111,168,.18); }
+.cn-chip.is-hidden { display: none !important; }
+
+/* Lang chips (idiomas requeridos) */
+.cn-lang-row { display: flex; gap: 7px; flex-wrap: wrap; justify-content: center; }
+.cn-lang-chip { border: 1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.045); color: #f8fbff; border-radius: 999px; min-height: 34px; padding: 6px 14px; font-size: 11px; font-weight: 900; letter-spacing: .6px; text-transform: uppercase; cursor: pointer; transition: .18s ease; display: inline-flex; align-items: center; gap: 6px; }
+.cn-lang-chip:hover { background: rgba(255,255,255,.1); }
+.cn-lang-chip.active { background: linear-gradient(180deg, #fff, #ffd0e4); color: #02040a; border-color: rgba(255,255,255,.7); }
+.cn-lang-chip .lc { font-size: 10px; opacity: .65; font-weight: 700; }
+
+/* Dropdown */
+.cn-dropdown { position: relative; display: inline-flex; }
+.cn-dropdown-btn { display: inline-flex; align-items: center; gap: 8px; border: 1px solid rgba(255,255,255,.14); background: rgba(255,255,255,.055); color: #f8fbff; border-radius: 14px; min-height: 50px; padding: 0 18px; font-size: 13px; font-weight: 700; cursor: pointer; transition: .2s ease; white-space: nowrap; font-family: inherit; }
+.cn-dropdown-btn:hover { background: rgba(255,255,255,.09); }
+.cn-dropdown-panel { position: absolute; top: calc(100% + 8px); left: 0; min-width: 220px; z-index: 200; background: rgba(12,16,32,.96); border: 1px solid rgba(255,255,255,.13); border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,.7); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); overflow: hidden; }
+.cn-dd-search { padding: 10px 12px; border-bottom: 1px solid rgba(255,255,255,.07); display: flex; align-items: center; gap: 8px; }
+.cn-dd-search svg { width: 16px; height: 16px; fill: var(--cn-muted); flex-shrink: 0; }
+.cn-dd-search input { flex: 1; background: transparent; border: none; outline: none; color: #fff; font-size: 13px; font-family: inherit; }
+.cn-dd-search input::placeholder { color: var(--cn-muted); }
+.cn-dd-list { max-height: 240px; overflow-y: auto; padding: 6px; }
+.cn-dd-item { display: block; width: 100%; text-align: left; padding: 10px 14px; border-radius: 10px; border: none; background: transparent; color: var(--cn-soft); font-size: 13.5px; font-family: inherit; cursor: pointer; transition: .15s ease; }
+.cn-dd-item:hover { background: rgba(255,255,255,.07); color: #fff; }
+.cn-dd-item.active { background: rgba(255,111,168,.12); color: var(--cn-pink); font-weight: 700; }
+.dd-chevron { font-size: 11px; opacity: .6; }
+
+/* Active filters */
+.cn-active-filters { display: flex; gap: 7px; flex-wrap: wrap; justify-content: center; min-height: 0; }
+.cn-af-tag { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px 5px 14px; border: 1px solid rgba(255,111,168,.3); background: rgba(255,111,168,.08); border-radius: 999px; font-size: 12px; font-weight: 700; color: var(--cn-pink); }
+.cn-af-tag button { border: none; background: transparent; color: var(--cn-pink); cursor: pointer; font-size: 15px; line-height: 1; padding: 0 0 0 2px; opacity: .7; }
+.cn-af-tag button:hover { opacity: 1; }
+
+/* Refresh / Share */
+.cn-refresh-btn { border: 1px solid rgba(255,255,255,.14); background: rgba(255,255,255,.055); color: #f8fbff; border-radius: 999px; min-height: 38px; padding: 8px 20px; font-size: 12px; font-weight: 900; letter-spacing: .5px; text-transform: uppercase; cursor: pointer; transition: .2s ease; font-family: inherit; }
+.cn-refresh-btn:hover { background: rgba(255,255,255,.1); }
+.cn-refresh-btn.loading { opacity: .6; pointer-events: none; }
+.cn-refresh-spinner { display: inline-block; width: 12px; height: 12px; border: 2px solid rgba(255,255,255,.3); border-top-color: #fff; border-radius: 50%; animation: spin .7s linear infinite; vertical-align: middle; margin-right: 6px; }
+.cn-share-btn { border: 1px solid rgba(255,255,255,.14); background: rgba(255,255,255,.055); color: #f8fbff; border-radius: 999px; min-height: 38px; padding: 8px 20px; font-size: 12px; font-weight: 900; letter-spacing: .5px; cursor: pointer; transition: .2s ease; font-family: inherit; }
+.cn-share-btn:hover { background: rgba(255,255,255,.1); }
+.cn-results-info { text-align: center; color: var(--cn-muted); font-size: 13px; font-weight: 600; margin-top: 4px; }
+.cn-no-results { grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: var(--cn-muted); font-size: 16px; }
+
+/* ── CARDS ── */
+.cn-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(295px, 1fr)); gap: 20px; width: 100%; align-items: stretch; }
+.job-card { position: relative; min-width: 0; overflow: hidden; display: flex; flex-direction: column; padding: 20px; border-radius: var(--cn-radius-xl); border: 1px solid var(--cn-line); background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.030)), rgba(14,6,18,.72); box-shadow: var(--cn-shadow-soft); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); transition: transform .28s ease, box-shadow .28s ease, border-color .28s ease; animation: fadeUp .7s ease both, cardFloat 6s ease-in-out infinite; cursor: pointer; }
+.job-card:nth-child(1) { animation-delay: .35s, 0s; } .job-card:nth-child(2) { animation-delay: .42s, 0s; } .job-card:nth-child(3) { animation-delay: .49s, 0s; } .job-card:nth-child(4) { animation-delay: .56s, 0s; } .job-card:nth-child(5) { animation-delay: .63s, 0s; } .job-card:nth-child(6) { animation-delay: .70s, 0s; } .job-card:nth-child(n+7) { animation-delay: .77s, 0s; }
+.job-card::before { content: ""; position: absolute; inset: -1px; pointer-events: none; border-radius: inherit; background: radial-gradient(circle at 22% 0%, rgba(255,111,168,.18), transparent 34%), linear-gradient(180deg, rgba(255,255,255,.10), transparent 32%); opacity: .55; }
+.job-card::after { content: ""; position: absolute; inset: 0; pointer-events: none; border-radius: inherit; background: radial-gradient(circle at 50% 0%, rgba(255,255,255,.10), transparent 38%); opacity: 0; transition: opacity .28s ease; }
+.job-card:hover { transform: translateY(-7px); border-color: var(--cn-line-strong); box-shadow: var(--cn-shadow); }
+.job-card:hover::after { opacity: 1; }
+.job-card > * { position: relative; z-index: 2; }
+.job-card.is-hidden { display: none !important; }
+
+/* Badges */
+.badges { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 14px; }
+.badge { display: inline-flex; align-items: center; min-height: 25px; padding: 5px 9px; border-radius: 999px; border: 1px solid rgba(255,255,255,.13); background: rgba(255,255,255,.06); color: #dce7ff; font-size: 11px; font-weight: 900; letter-spacing: .45px; text-transform: uppercase; }
+.badge.cabin-crew { color: #ffd0e4; background: rgba(255,111,168,.14); border-color: rgba(255,111,168,.34); }
+.badge.purser { color: #ffe7c2; background: rgba(255,177,82,.13); border-color: rgba(255,177,82,.34); }
+.badge.senior { color: #eadbff; background: rgba(197,107,255,.13); border-color: rgba(197,107,255,.32); }
+.badge.head-purser { color: #ffeca0; background: rgba(255,202,125,.12); border-color: rgba(255,202,125,.30); }
+.badge.new-job { color: #dcfff0; background: rgba(125,255,186,.12); border-color: rgba(125,255,186,.30); }
+
+/* Brand */
+.brand { display: flex; align-items: center; gap: 13px; margin-bottom: 12px; min-width: 0; }
+.brand img { width: 48px; height: 48px; object-fit: contain; flex-shrink: 0; display: block; border-radius: 14px; background: #ffffff; border: 1px solid rgba(255,255,255,.65); padding: 6px; box-shadow: 0 6px 18px rgba(0,0,0,.24); }
+.brand .logo-fallback { width: 48px; height: 48px; flex-shrink: 0; border-radius: 14px; background: linear-gradient(135deg, rgba(255,111,168,.25), rgba(197,107,255,.2)); border: 1px solid rgba(255,111,168,.3); display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 18px; color: var(--cn-pink); }
+.brand div { min-width: 0; }
+.company { margin: 0; color: #ffffff; font-weight: 900; font-size: 15.5px; line-height: 1.25; letter-spacing: -.01em; overflow-wrap: anywhere; }
+.subtitle { margin: 3px 0 0; color: var(--cn-muted); font-size: 12.5px; line-height: 1.45; overflow-wrap: anywhere; }
+.title { margin: 10px 0 15px; color: #ffffff; font-size: 19px; font-weight: 950; line-height: 1.28; letter-spacing: -.03em; overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+/* Collapsibles */
+details { border: 1px solid rgba(255,255,255,.10); border-radius: var(--cn-radius-md); padding: 0; margin-bottom: 10px; max-width: 100%; overflow: hidden; background: rgba(255,255,255,.04); transition: border-color .2s ease; }
+details[open] { border-color: rgba(255,111,168,.28); background: rgba(255,111,168,.05); }
+summary { cursor: pointer; list-style: none; position: relative; min-height: 46px; display: flex; align-items: center; padding: 12px 43px 12px 14px; color: #ffffff; font-weight: 900; font-size: 14px; }
+summary::-webkit-details-marker { display: none; }
+summary::after { content: "+"; position: absolute; right: 13px; top: 50%; transform: translateY(-50%); width: 23px; height: 23px; border-radius: 999px; display: grid; place-items: center; color: #ffffff; background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.16); font-weight: 900; font-size: 15px; }
+details[open] summary::after { content: "×"; background: rgba(255,111,168,.18); border-color: rgba(255,111,168,.36); }
+.reqs { padding: 0 15px 15px 31px; margin: 0; color: var(--cn-soft); font-size: 13.5px; line-height: 1.58; }
+.reqs li { margin-bottom: 6px; word-break: break-word; }
+.reqs li:last-child { margin-bottom: 0; }
+
+/* Card separador */
+.card-divider { height: 1px; background: rgba(255,255,255,.07); margin: 8px 0; }
+
+/* Buttons */
+.actions { margin-top: auto; display: flex; flex-wrap: wrap; gap: 9px; padding-top: 8px; }
+.btn { display: inline-flex; align-items: center; justify-content: center; min-height: 42px; padding: 11px 15px; border-radius: 12px; font-size: 13px; line-height: 1.2; text-decoration: none; font-weight: 950; letter-spacing: .01em; transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease, background .2s ease; }
+.btn:hover { transform: translateY(-2px); }
+.apply { color: #02040a; background: linear-gradient(180deg, #ffffff, #ffd0e4); border: 1px solid rgba(255,255,255,.75); box-shadow: 0 12px 26px rgba(255,111,168,.18); }
+.apply:hover { background: linear-gradient(180deg, #ffffff, #ffb0ca); box-shadow: 0 16px 34px rgba(255,111,168,.27); }
+.company-btn { color: #f4f8ff; border: 1px solid rgba(255,255,255,.16); background: rgba(255,255,255,.065); }
+.company-btn:hover { background: rgba(255,255,255,.105); border-color: rgba(255,255,255,.26); }
+
+/* Share en cards */
+.card-share-row { display: flex; gap: 8px; padding: 8px 0 0; }
+.card-share-btn { flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 7px; border-radius: 10px; height: 36px; padding: 0 12px; font-size: 12px; font-weight: 700; cursor: pointer; transition: background .15s ease, transform .1s ease; text-decoration: none; white-space: nowrap; border: none; }
+.card-share-btn.wa { background: rgba(37,211,102,.12); color: #1da851; }
+.card-share-btn.wa:hover { background: rgba(37,211,102,.22); }
+.card-share-btn.tg { background: rgba(39,171,226,.12); color: #1a8ab5; }
+.card-share-btn.tg:hover { background: rgba(39,171,226,.22); }
+
+/* Skeleton */
+.cn-skeleton-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(295px, 1fr)); gap: 20px; }
+.cn-skeleton-card { border-radius: var(--cn-radius-xl); border: 1px solid var(--cn-line); background: rgba(255,255,255,.04); padding: 20px; display: flex; flex-direction: column; gap: 12px; }
+@keyframes shimmer { 0%{opacity:.4} 50%{opacity:.8} 100%{opacity:.4} }
+.cn-skel-line { height: 14px; border-radius: 8px; background: rgba(255,255,255,.08); animation: shimmer 1.4s ease-in-out infinite; }
+.cn-skel-line.h20 { height: 20px; } .cn-skel-line.w30 { width: 30%; } .cn-skel-line.w50 { width: 50%; } .cn-skel-line.w70 { width: 70%; } .cn-skel-line.w100 { width: 100%; }
+.cn-skel-brand { display: flex; gap: 12px; align-items: center; }
+.cn-skel-circle { width: 48px; height: 48px; border-radius: 14px; background: rgba(255,255,255,.08); flex-shrink: 0; animation: shimmer 1.4s ease-in-out infinite; }
+.cn-skel-brand-text { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+
+/* Toast */
+.cn-toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: rgba(12,8,20,.92); border: 1px solid rgba(255,111,168,.3); color: #fff; padding: 12px 20px; border-radius: 14px; font-size: 14px; font-weight: 700; z-index: 9999; backdrop-filter: blur(20px); transition: transform .35s cubic-bezier(.2,1.2,.3,1), opacity .35s ease; opacity: 0; max-width: 90vw; text-align: center; pointer-events: none; }
+.cn-toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+.cn-toast.clickable { pointer-events: auto; cursor: pointer; }
+
+/* Modal */
+.cn-modal-overlay { position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,.6); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); display: flex; align-items: flex-end; justify-content: center; opacity: 0; pointer-events: none; transition: opacity .3s ease; }
+.cn-modal-overlay.open { opacity: 1; pointer-events: auto; }
+@media (min-width: 640px) { .cn-modal-overlay { align-items: center; } }
+.cn-modal-drawer { background: rgba(10,6,18,.97); border: 1px solid rgba(255,255,255,.1); border-radius: 24px 24px 0 0; width: 100%; max-width: 560px; max-height: 90vh; display: flex; flex-direction: column; overflow: hidden; transform: translateY(40px); transition: transform .35s cubic-bezier(.2,1.2,.3,1); }
+.cn-modal-overlay.open .cn-modal-drawer { transform: translateY(0); }
+@media (min-width: 640px) { .cn-modal-drawer { border-radius: 24px; max-height: 85vh; } }
+.cn-modal-header { display: flex; align-items: center; gap: 14px; padding: 20px 20px 16px; border-bottom: 1px solid rgba(255,255,255,.08); flex-shrink: 0; }
+.cn-modal-logo { width: 52px; height: 52px; object-fit: contain; border-radius: 14px; background: #fff; border: 1px solid rgba(255,255,255,.6); padding: 6px; flex-shrink: 0; }
+.cn-modal-logo-fallback { width: 52px; height: 52px; border-radius: 14px; background: linear-gradient(135deg, rgba(255,111,168,.25), rgba(197,107,255,.2)); border: 1px solid rgba(255,111,168,.3); display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 20px; color: var(--cn-pink); flex-shrink: 0; }
+.cn-modal-title-wrap { flex: 1; min-width: 0; }
+.cn-modal-company { font-size: 13px; font-weight: 700; color: var(--cn-muted); margin: 0 0 2px; }
+.cn-modal-role { font-size: 18px; font-weight: 900; color: #f8fbff; margin: 0; line-height: 1.2; }
+.cn-modal-close { width: 36px; height: 36px; border-radius: 999px; border: 1px solid rgba(255,255,255,.15); background: rgba(255,255,255,.06); color: var(--cn-muted); cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: .2s ease; }
+.cn-modal-close:hover { background: rgba(255,255,255,.12); color: #fff; }
+.cn-modal-body { padding: 24px; flex: 1; overflow-y: auto; }
+.cn-modal-badges { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 18px; }
+.cn-modal-meta { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; padding: 14px 16px; border-radius: 14px; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07); }
+.cn-modal-meta-item { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--cn-soft); }
+.cn-modal-meta-item strong { color: #f8fbff; font-weight: 700; }
+.cn-modal-section { margin-bottom: 22px; }
+.cn-modal-section-title { font-size: 11px; font-weight: 900; letter-spacing: .8px; text-transform: uppercase; color: var(--cn-muted); margin: 0 0 10px; display: flex; align-items: center; gap: 8px; }
+.cn-modal-section-title::after { content: ''; flex: 1; height: 1px; background: rgba(255,255,255,.07); }
+.cn-modal-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 7px; }
+.cn-modal-list li { display: flex; align-items: flex-start; gap: 10px; font-size: 13.5px; color: var(--cn-soft); line-height: 1.5; }
+.cn-modal-list li::before { content: '✓'; color: var(--cn-pink); font-weight: 900; font-size: 12px; margin-top: 2px; flex-shrink: 0; }
+.cn-modal-list.benefits li::before { content: '✦'; color: var(--cn-purple); }
+.cn-modal-deadline { display: flex; align-items: center; gap: 8px; padding: 12px 16px; border-radius: 12px; margin-bottom: 20px; font-size: 13px; font-weight: 700; }
+.cn-modal-deadline.urgent { background: rgba(255,80,80,.1); border: 1px solid rgba(255,80,80,.3); color: #ff6b6b; }
+.cn-modal-deadline.warning { background: rgba(255,177,82,.08); border: 1px solid rgba(255,177,82,.25); color: #ffb152; }
+.cn-modal-deadline.ok { background: rgba(125,255,186,.08); border: 1px solid rgba(125,255,186,.2); color: #7dffba; }
+.cn-modal-actions { position: sticky; bottom: 0; background: rgba(8,4,16,.97); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-top: 1px solid rgba(255,255,255,.08); padding: 16px 24px; display: flex; gap: 10px; flex-shrink: 0; }
+.cn-modal-apply { flex: 1; height: 50px; border-radius: 14px; border: none; cursor: pointer; background: linear-gradient(135deg, var(--cn-pink), #e0508a); color: #fff; font-size: 15px; font-weight: 900; letter-spacing: .3px; transition: .2s ease; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; }
+.cn-modal-apply:hover { filter: brightness(1.1); transform: translateY(-1px); box-shadow: 0 8px 24px rgba(255,111,168,.35); }
+.cn-modal-web { height: 50px; padding: 0 18px; border-radius: 14px; border: 1px solid rgba(255,255,255,.15); background: rgba(255,255,255,.06); color: var(--cn-soft); font-size: 13px; font-weight: 700; cursor: pointer; transition: .2s ease; white-space: nowrap; display: flex; align-items: center; gap: 6px; text-decoration: none; }
+.cn-modal-web:hover { background: rgba(255,255,255,.1); color: #fff; }
+.cn-modal-share-row { display: flex; gap: 8px; padding: 0 24px 16px; flex-shrink: 0; }
+.cn-modal-share-btn { flex: 1; height: 40px; border-radius: 12px; border: none; font-size: 12px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 7px; transition: .15s ease; text-decoration: none; letter-spacing: .2px; }
+.cn-modal-share-btn.wa { background: rgba(37,211,102,.15); color: #25D366; border: 1px solid rgba(37,211,102,.3); }
+.cn-modal-share-btn.wa:hover { background: rgba(37,211,102,.25); transform: translateY(-1px); }
+.cn-modal-share-btn.tg { background: rgba(39,171,226,.15); color: #27ABE2; border: 1px solid rgba(39,171,226,.3); }
+.cn-modal-share-btn.tg:hover { background: rgba(39,171,226,.25); transform: translateY(-1px); }
+.cn-highlight { animation: cnHighlight 3s ease forwards !important; }
+@keyframes cnHighlight { 0%,100%{box-shadow:var(--cn-shadow-soft)} 30%,70%{box-shadow:0 0 0 3px rgba(255,111,168,.7),var(--cn-shadow)} }
+
+/* Focus */
+.cn-tab:focus-visible, .cn-chip:focus-visible, .cn-refresh-btn:focus-visible, .cn-share-btn:focus-visible { outline: 2px solid var(--cn-pink); outline-offset: 3px; }
+
+/* Responsive */
+@media (max-width: 900px) { .cn-section { padding: 58px 18px 82px; } .cn-grid { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 18px; } }
+@media (max-width: 640px) { .cn-section { padding: 44px 14px 70px; } .cn-hero { margin-bottom: 30px; } .cn-title-main { font-size: clamp(34px, 12vw, 48px); letter-spacing: -1.6px; } .cn-subtitle { font-size: 15.5px; } .cn-grid { grid-template-columns: 1fr; gap: 14px; } .job-card { padding: 17px; border-radius: 20px; } .btn { flex: 1 1 140px; } }
+@media (prefers-reduced-motion: reduce) { .cn-section *, .cn-section *::before, .cn-section *::after { animation: none !important; transition: none !important; } }
+</style>
+</head>
+<body class="cn-lang-en">
+
+<section class="cn-section">
+<div class="cn-inner">
+
+  <!-- LANG ISLAND -->
+  <div class="cn-lang-top">
+    <div class="cn-lang-island">
+      <button class="cn-flag-btn" id="cnFlagEs" onclick="cnSetLang('es')" aria-label="Español">
+        <span class="cn-flag"><svg viewBox="0 0 60 40" preserveAspectRatio="xMidYMid slice"><rect width="60" height="40" fill="#AA151B"/><rect y="10" width="60" height="20" fill="#F1BF00"/></svg></span>
+        <span class="cn-label">ES</span>
+      </button>
+      <button class="cn-flag-btn active" id="cnFlagEn" onclick="cnSetLang('en')" aria-label="English">
+        <span class="cn-flag"><svg viewBox="0 0 60 30" preserveAspectRatio="xMidYMid slice"><defs><clipPath id="ukc2"><rect width="60" height="30"/></clipPath></defs><g clip-path="url(#ukc2)"><rect width="60" height="30" fill="#012169"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/><path d="M0,0 L60,30" stroke="#C8102E" stroke-width="2.5" transform="translate(1.5,-.8)"/><path d="M60,0 L0,30" stroke="#C8102E" stroke-width="2.5" transform="translate(-1.5,-.8)"/><rect x="25" width="10" height="30" fill="#fff"/><rect y="10" width="60" height="10" fill="#fff"/><rect x="27" width="6" height="30" fill="#C8102E"/><rect y="12" width="60" height="6" fill="#C8102E"/></g></svg></span>
+        <span class="cn-label">EN</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <div class="cn-hero">
+    <div class="cn-kicker">
+      <span class="lang-es">Ofertas de TCPs</span>
+      <span class="lang-en">Cabin crew jobs board</span>
+    </div>
+    <h1 class="cn-title-main">
+      <span class="lang-es">Oportunidades de cabina</span><span class="lang-en">Cabin crew</span><br>
+      <span class="lang-es">para TCPs en Europa y más allá</span><span class="lang-en">opportunities across Europe & beyond</span>
+    </h1>
+    <p class="cn-subtitle">
+      <span class="lang-es">Explora vacantes seleccionadas para TCP, purser, senior cabin crew y head purser. Busca, filtra y encuentra tu próximo vuelo.</span>
+      <span class="lang-en">Explore curated vacancies for cabin crew, pursers, senior crew and head pursers. Search, filter and find your next flight.</span>
+      <br>
+      <span style="color:var(--cn-pink);font-size:14px;font-weight:700;margin-top:8px;display:inline-block">
+        <span id="cnTotalCount">0</span>
+        <span class="lang-es"> ofertas activas ahora mismo</span>
+        <span class="lang-en"> active opportunities right now</span>
+      </span>
+    </p>
+  </div>
+
+  <!-- CONTROLS -->
+  <div class="cn-controls">
+
+    <!-- TABS: por tipo de rol TCP -->
+    <div class="cn-tabs">
+      <button class="cn-tab active" data-tab="all" onclick="cnSetTab('all')">
+        <span class="lang-es">Todas</span><span class="lang-en">All roles</span>
+        <span class="cn-tab-count" id="count-all">(0)</span>
+      </button>
+      <button class="cn-tab" data-tab="cabin_crew" onclick="cnSetTab('cabin_crew')">
+        <span class="lang-es">TCP / Cabin Crew</span><span class="lang-en">Cabin Crew</span>
+        <span class="cn-tab-count" id="count-cabin_crew">(0)</span>
+        <span class="cn-tab-new" id="new-cabin_crew"></span>
+      </button>
+      <button class="cn-tab" data-tab="purser" onclick="cnSetTab('purser')">
+        Purser
+        <span class="cn-tab-count" id="count-purser">(0)</span>
+        <span class="cn-tab-new" id="new-purser"></span>
+      </button>
+      <button class="cn-tab" data-tab="senior_cabin_crew" onclick="cnSetTab('senior_cabin_crew')">
+        <span class="lang-es">Senior TCP</span><span class="lang-en">Senior Crew</span>
+        <span class="cn-tab-count" id="count-senior_cabin_crew">(0)</span>
+        <span class="cn-tab-new" id="new-senior_cabin_crew"></span>
+      </button>
+      <button class="cn-tab" data-tab="head_purser" onclick="cnSetTab('head_purser')">
+        Head Purser
+        <span class="cn-tab-count" id="count-head_purser">(0)</span>
+        <span class="cn-tab-new" id="new-head_purser"></span>
+      </button>
+    </div>
+
+    <!-- SEARCH + SORT -->
+    <div class="cn-search-row">
+      <div class="cn-search-box">
+        <svg viewBox="0 0 24 24"><path d="M21.71 20.29l-3.4-3.39A9 9 0 1 0 17 18.31l3.39 3.4a1 1 0 0 0 1.41 0 1 1 0 0 0-.09-1.42zM11 18a7 7 0 1 1 7-7 7 7 0 0 1-7 7z"/></svg>
+        <input type="text" class="cn-search-input" id="cnSearch" oninput="cnRender()"
+          data-ph-es="Buscar aerolínea, país, idioma, puesto..."
+          data-ph-en="Search airline, country, language, role..."
+          placeholder="Search airline, country, language, role...">
+      </div>
+      <div class="cn-dropdown" id="cnSortDd">
+        <button class="cn-dropdown-btn" onclick="cnToggleDd('sort')" id="cnSortBtn">
+          <span id="cnSortLabel">⏰ <span class="lang-es">Más recientes</span><span class="lang-en">Newest</span></span>
+          <span class="dd-chevron">▾</span>
+        </button>
+        <div class="cn-dropdown-panel" id="cnSortPanel" style="display:none">
+          <div class="cn-dd-list" id="cnSortList"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CABIN CLASS CHIPS -->
+    <div class="cn-filters-row" id="cnCabinClassRow">
+      <button class="cn-chip active" data-cc-filter="all" onclick="cnSetCabinClass('all')">
+        <span class="lang-es">Todas</span><span class="lang-en">All</span>
+      </button>
+      <button class="cn-chip" data-cc-filter="commercial" onclick="cnSetCabinClass('commercial')">
+        <span class="lang-es">Comercial</span><span class="lang-en">Commercial</span>
+      </button>
+      <button class="cn-chip" data-cc-filter="low_cost" onclick="cnSetCabinClass('low_cost')">
+        Low Cost
+      </button>
+      <button class="cn-chip" data-cc-filter="business" onclick="cnSetCabinClass('business')">
+        Business / VIP
+      </button>
+      <button class="cn-chip" data-cc-filter="private" onclick="cnSetCabinClass('private')">
+        <span class="lang-es">Aviación Privada</span><span class="lang-en">Private</span>
+      </button>
+    </div>
+
+    <!-- LANGUAGE CHIPS (dinámicos desde datos) -->
+    <div class="cn-lang-row" id="cnLangRow"></div>
+
+    <!-- COUNTRY + SHARE -->
+    <div class="cn-search-row">
+      <div class="cn-dropdown" id="cnCountryDd">
+        <button class="cn-dropdown-btn" onclick="cnToggleDd('country')" id="cnCountryBtn">
+          <span id="cnCountryLabel">🌍 <span class="lang-es">País</span><span class="lang-en">Country</span></span>
+          <span class="dd-chevron">▾</span>
+        </button>
+        <div class="cn-dropdown-panel" id="cnCountryPanel" style="display:none">
+          <div class="cn-dd-search">
+            <svg viewBox="0 0 24 24"><path d="M21.71 20.29l-3.4-3.39A9 9 0 1 0 17 18.31l3.39 3.4a1 1 0 0 0 1.41 0 1 1 0 0 0-.09-1.42zM11 18a7 7 0 1 1 7-7 7 7 0 0 1-7 7z"/></svg>
+            <input type="text" id="cnCountrySearch" placeholder="Search..." oninput="cnFilterDdSearch('country')">
+          </div>
+          <div class="cn-dd-list" id="cnCountryList"></div>
+        </div>
+      </div>
+      <select id="cnCountry" style="display:none" onchange="countryFilter=this.value;cnRender()">
+        <option value="">All countries</option>
+      </select>
+      <button class="cn-share-btn" onclick="cnShareURL()">
+        🔗 <span class="lang-es">Compartir</span><span class="lang-en">Share</span>
+      </button>
+    </div>
+
+    <!-- ACTIVE FILTERS -->
+    <div class="cn-active-filters" id="cnActiveFilters"></div>
+
+    <!-- REFRESH -->
+    <div style="text-align:center;">
+      <button class="cn-refresh-btn" id="cnRefreshBtn" onclick="fetchJobsNow()">
+        <span class="lang-es">🔄 Recargar</span><span class="lang-en">🔄 Refresh</span>
+      </button>
+      <span id="cnLastRefresh" style="font-size:11px;color:var(--cn-muted);opacity:.6"></span>
+    </div>
+    <div class="cn-results-info" id="cnResultsInfo"></div>
+  </div>
+
+  <!-- GRID -->
+  <div class="cn-grid" id="cnGrid">
+    <div class="cn-skeleton-grid">
+      <div class="cn-skeleton-card"><div class="cn-skel-line w50"></div><div class="cn-skel-brand"><div class="cn-skel-circle"></div><div class="cn-skel-brand-text"><div class="cn-skel-line w70"></div><div class="cn-skel-line w30"></div></div></div><div class="cn-skel-line h20 w100"></div><div class="cn-skel-line w100"></div><div class="cn-skel-line w70"></div></div>
+      <div class="cn-skeleton-card"><div class="cn-skel-line w50"></div><div class="cn-skel-brand"><div class="cn-skel-circle"></div><div class="cn-skel-brand-text"><div class="cn-skel-line w70"></div><div class="cn-skel-line w30"></div></div></div><div class="cn-skel-line h20 w100"></div><div class="cn-skel-line w100"></div><div class="cn-skel-line w70"></div></div>
+      <div class="cn-skeleton-card"><div class="cn-skel-line w50"></div><div class="cn-skel-brand"><div class="cn-skel-circle"></div><div class="cn-skel-brand-text"><div class="cn-skel-line w70"></div><div class="cn-skel-line w30"></div></div></div><div class="cn-skel-line h20 w100"></div><div class="cn-skel-line w100"></div><div class="cn-skel-line w70"></div></div>
+    </div>
+  </div>
+
+</div>
+</section>
+
+<!-- TOAST -->
+<div class="cn-toast" id="cnToast"></div>
+
+<!-- MODAL -->
+<div class="cn-modal-overlay" id="cnModalOverlay" onclick="cnModalClose(event)">
+  <div class="cn-modal-drawer" id="cnModalDrawer">
+    <div class="cn-modal-header">
+      <div id="cnModalLogo"></div>
+      <div class="cn-modal-title-wrap">
+        <p class="cn-modal-company" id="cnModalCompany"></p>
+        <p class="cn-modal-role" id="cnModalRole"></p>
+      </div>
+      <button class="cn-modal-close" onclick="cnCloseModal()">&#215;</button>
+    </div>
+    <div class="cn-modal-body" id="cnModalBody"></div>
+    <div id="cnModalShareRow"></div>
+    <div class="cn-modal-actions" id="cnModalActions"></div>
+  </div>
+</div>
+
+<script>
+// ── CONSTANTS ────────────────────────────────────────────────────────────────
+var SB_URL = 'https://ifbpbtyifiuhzyeifhea.supabase.co';
+var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlmYnBidHlpZml1aHp5ZWlmaGVhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxNjIxNDMsImV4cCI6MjA5MzczODE0M30.CxWKoHsf0yPtJuoWPSaWFv-m-1GXvi2GGo_KHjxicWk';
+var CN_WEB = 'https://www.cabin-network.com';
+
+var WA_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>';
+var TG_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.820 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>';
+
+// ── STATE ─────────────────────────────────────────────────────────────────────
+var allJobs = [];
+var lang = 'en';
+var tab = 'all';
+var cabinClass = 'all';
+var langFilter = null;
+var countryFilter = '';
+var _sortVal = 'newest';
+var today = new Date().toISOString().split('T')[0];
+var _modalJob = null;
+
+// ── UTILS ─────────────────────────────────────────────────────────────────────
+function esc(s) {
+  if(!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function timeAgo(ts) {
+  if(!ts) return '';
+  var diff = Date.now() - new Date(ts).getTime();
+  var d = Math.floor(diff / 86400000);
+  if(d === 0) return lang === 'es' ? 'Hoy' : 'Today';
+  if(d === 1) return lang === 'es' ? 'Ayer' : 'Yesterday';
+  if(d < 7)  return lang === 'es' ? 'Hace '+d+' días' : d+' days ago';
+  if(d < 30) return lang === 'es' ? 'Hace '+(Math.floor(d/7))+' semanas' : Math.floor(d/7)+' weeks ago';
+  return lang === 'es' ? 'Hace '+(Math.floor(d/30))+' meses' : Math.floor(d/30)+' months ago';
+}
+
+function daysUntil(dateStr) {
+  if(!dateStr) return null;
+  var diff = new Date(dateStr).getTime() - Date.now();
+  return Math.ceil(diff / 86400000);
+}
+
+function countryFlag(country) {
+  var flags = {
+    'Spain':'🇪🇸','España':'🇪🇸','UK':'🇬🇧','United Kingdom':'🇬🇧','Germany':'🇩🇪','Alemania':'🇩🇪',
+    'France':'🇫🇷','Francia':'🇫🇷','Italy':'🇮🇹','Italia':'🇮🇹','Portugal':'🇵🇹','Netherlands':'🇳🇱',
+    'Switzerland':'🇨🇭','Suiza':'🇨🇭','UAE':'🇦🇪','Qatar':'🇶🇦','Saudi Arabia':'🇸🇦','Turkey':'🇹🇷',
+    'Greece':'🇬🇷','Grecia':'🇬🇷','Ireland':'🇮🇪','Irlanda':'🇮🇪','Belgium':'🇧🇪','Austria':'🇦🇹',
+    'Poland':'🇵🇱','Polonia':'🇵🇱','Norway':'🇳🇴','Noruega':'🇳🇴','Sweden':'🇸🇪','Suecia':'🇸🇪',
+    'Denmark':'🇩🇰','Dinamarca':'🇩🇰','Finland':'🇫🇮','Finlandia':'🇫🇮','Malta':'🇲🇹',
+    'Morocco':'🇲🇦','Marruecos':'🇲🇦','Egypt':'🇪🇬','Egipto':'🇪🇬','Jordan':'🇯🇴'
+  };
+  return flags[country] || '🌍';
+}
+
+function roleLabel(role) {
+  var m = {
+    'cabin_crew': lang==='es' ? 'TCP / Cabin Crew' : 'Cabin Crew',
+    'purser': 'Purser',
+    'senior_cabin_crew': lang==='es' ? 'Senior TCP' : 'Senior Cabin Crew',
+    'head_purser': 'Head Purser'
+  };
+  return m[role] || role;
+}
+
+function cabinClassLabel(cc) {
+  var m = {
+    'commercial': lang==='es' ? 'Comercial' : 'Commercial',
+    'low_cost': 'Low Cost',
+    'business': 'Business / VIP',
+    'private': lang==='es' ? 'Aviación Privada' : 'Private Aviation'
+  };
+  return m[cc] || cc;
+}
+
+function langLabel(code) {
+  var m = { 'es':'🇪🇸 ES', 'en':'🇬🇧 EN', 'fr':'🇫🇷 FR', 'ar':'🇸🇦 AR',
+    'de':'🇩🇪 DE', 'it':'🇮🇹 IT', 'pt':'🇵🇹 PT', 'tr':'🇹🇷 TR',
+    'nl':'🇳🇱 NL', 'el':'🇬🇷 EL', 'pl':'🇵🇱 PL', 'sv':'🇸🇪 SV' };
+  return m[code] || code.toUpperCase();
+}
+
+// ── LANGUAGE ──────────────────────────────────────────────────────────────────
+function applyLang() {
+  document.documentElement.setAttribute('data-lang', lang);
+  document.body.classList.toggle('cn-lang-en', lang === 'en');
+  document.querySelectorAll('[data-ph-'+lang+']').forEach(function(el){
+    el.placeholder = el.getAttribute('data-ph-'+lang);
+  });
+}
+
+function cnSetLang(l) {
+  lang = l;
+  document.getElementById('cnFlagEs').classList.toggle('active', l==='es');
+  document.getElementById('cnFlagEn').classList.toggle('active', l==='en');
+  applyLang();
+  cnRender();
+}
+
+// ── TABS ──────────────────────────────────────────────────────────────────────
+function cnSetTab(t) {
+  tab = t;
+  document.querySelectorAll('.cn-tab').forEach(function(b){
+    b.classList.toggle('active', b.getAttribute('data-tab') === t);
+  });
+  cnRender();
+}
+
+// ── CABIN CLASS ───────────────────────────────────────────────────────────────
+function cnSetCabinClass(cc) {
+  cabinClass = cc;
+  document.querySelectorAll('[data-cc-filter]').forEach(function(b){
+    b.classList.toggle('active', b.getAttribute('data-cc-filter') === cc);
+  });
+  cnRender();
+}
+
+// ── LANG FILTER CHIPS ─────────────────────────────────────────────────────────
+function buildLangChips() {
+  var counts = {};
+  allJobs.forEach(function(j){
+    (j.languages_required||[]).forEach(function(l){
+      counts[l] = (counts[l]||0)+1;
+    });
+  });
+  var sorted = Object.entries(counts).sort(function(a,b){ return b[1]-a[1]; }).slice(0,10);
+  var row = document.getElementById('cnLangRow');
+  if(!sorted.length){ row.innerHTML=''; return; }
+  row.innerHTML = sorted.map(function(e){
+    var code=e[0], cnt=e[1], isActive=langFilter===code;
+    return '<button class="cn-lang-chip'+(isActive?' active':'')+'" onclick="cnToggleLang(\''+code+'\')">'
+      +langLabel(code)+' <span class="lc">('+cnt+')</span></button>';
+  }).join('');
+}
+
+function cnToggleLang(code) {
+  langFilter = langFilter === code ? null : code;
+  buildLangChips();
+  cnRender();
+}
+
+// ── COUNTRY DROPDOWN ──────────────────────────────────────────────────────────
+function buildCountryDd() {
+  var countries = {};
+  allJobs.forEach(function(j){
+    if(j.base_country) countries[j.base_country] = (countries[j.base_country]||0)+1;
+  });
+  var sorted = Object.entries(countries).sort(function(a,b){ return b[1]-a[1]; });
+  var sel = document.getElementById('cnCountry');
+  sel.innerHTML = '<option value="">All countries</option>';
+  sorted.forEach(function(e){ sel.innerHTML += '<option value="'+esc(e[0])+'">'+esc(e[0])+' ('+e[1]+')</option>'; });
+  renderCountryDdList(sorted);
+}
+
+function renderCountryDdList(list, filter) {
+  var dl = document.getElementById('cnCountryList');
+  var items = list.filter(function(e){ return !filter || e[0].toLowerCase().indexOf(filter)!==-1; });
+  dl.innerHTML = '<button class="cn-dd-item'+(countryFilter?'':' active')+'" onclick="cnSetCountry(\'\')">🌍 '+(lang==='es'?'Todos los países':'All countries')+'</button>';
+  dl.innerHTML += items.map(function(e){
+    return '<button class="cn-dd-item'+(countryFilter===e[0]?' active':'')+'" onclick="cnSetCountry(\''+esc(e[0])+'\')">'+countryFlag(e[0])+' '+esc(e[0])+' <span style="opacity:.5;font-size:11px">('+e[1]+')</span></button>';
+  }).join('');
+}
+
+function cnSetCountry(c) {
+  countryFilter = c;
+  var btn = document.getElementById('cnCountryBtn');
+  var lbl = document.getElementById('cnCountryLabel');
+  lbl.innerHTML = c ? (countryFlag(c)+' '+esc(c)) : '🌍 <span class="lang-es">País</span><span class="lang-en">Country</span>';
+  applyLang();
+  cnToggleDd('country', true);
+  cnRender();
+}
+
+function cnFilterDdSearch(type) {
+  if(type==='country'){
+    var q = (document.getElementById('cnCountrySearch').value||'').toLowerCase();
+    var countries = {};
+    allJobs.forEach(function(j){ if(j.base_country) countries[j.base_country]=(countries[j.base_country]||0)+1; });
+    renderCountryDdList(Object.entries(countries).sort(function(a,b){return b[1]-a[1];}), q);
+  }
+}
+
+// ── SORT DROPDOWN ─────────────────────────────────────────────────────────────
+function buildSortDd() {
+  var opts = [
+    {v:'newest', es:'⏰ Más recientes', en:'⏰ Newest'},
+    {v:'deadline', es:'📅 Deadline próximo', en:'📅 Deadline soonest'},
+    {v:'company', es:'🔤 Empresa A→Z', en:'🔤 Company A→Z'}
+  ];
+  var dl = document.getElementById('cnSortList');
+  dl.innerHTML = opts.map(function(o){
+    var label = lang==='es' ? o.es : o.en;
+    return '<button class="cn-dd-item'+(_sortVal===o.v?' active':'')+'" onclick="cnSetSort(\''+o.v+'\',\''+esc(label)+'\')">'+label+'</button>';
+  }).join('');
+}
+
+function cnSetSort(v, label) {
+  _sortVal = v;
+  document.getElementById('cnSortLabel').textContent = label;
+  cnToggleDd('sort', true);
+  cnRender();
+}
+
+function cnToggleDd(type, forceClose) {
+  var panel = document.getElementById('cn'+type.charAt(0).toUpperCase()+type.slice(1)+'Panel');
+  if(!panel) return;
+  var isOpen = panel.style.display !== 'none';
+  // Close all
+  ['sort','country'].forEach(function(t){
+    var p = document.getElementById('cn'+t.charAt(0).toUpperCase()+t.slice(1)+'Panel');
+    if(p) p.style.display='none';
+  });
+  if(!isOpen && !forceClose) {
+    panel.style.display='block';
+    if(type==='sort') buildSortDd();
+  }
+}
+document.addEventListener('click', function(e){
+  if(!e.target.closest('.cn-dropdown')) {
+    ['sort','country'].forEach(function(t){
+      var p = document.getElementById('cn'+t.charAt(0).toUpperCase()+t.slice(1)+'Panel');
+      if(p) p.style.display='none';
+    });
+  }
+});
+
+// ── COUNTS ────────────────────────────────────────────────────────────────────
+function updateCounts() {
+  var roles = ['cabin_crew','purser','senior_cabin_crew','head_purser'];
+  var c = {all: allJobs.length};
+  var newC = {};
+  var weekAgo = Date.now() - 7*24*3600*1000;
+  roles.forEach(function(r){ c[r]=0; newC[r]=0; });
+  allJobs.forEach(function(j){
+    if(c[j.role]!==undefined) c[j.role]++;
+    if(j.created_at && new Date(j.created_at).getTime() > weekAgo && newC[j.role]!==undefined) newC[j.role]++;
+  });
+  Object.keys(c).forEach(function(k){
+    var el = document.getElementById('count-'+k);
+    if(el) el.textContent = '('+c[k]+')';
+    var newEl = document.getElementById('new-'+k);
+    if(newEl){ newEl.textContent=newC[k]>0?'+'+newC[k]:''; newEl.style.display=newC[k]>0?'inline-flex':'none'; }
+  });
+  var totalEl = document.getElementById('cnTotalCount');
+  if(totalEl) totalEl.textContent = allJobs.length;
+}
+
+// ── CORPUS / SEARCH ───────────────────────────────────────────────────────────
+function _corpus(j) {
+  var p = [j.search_text||'',j.company||'',j.title_en||'',j.title_es||'',j.subtitle||'',
+    (j.languages_required||[]).join(' '),(j.badges||[]).join(' '),
+    (j.requirements||[]).join(' '),(j.offer||[]).join(' '),
+    j.role||'',j.base_country||'',j.cabin_class||''];
+  return p.join(' ').toLowerCase();
+}
+function _mq(corpus, q) {
+  if(!q) return true;
+  return q.trim().toLowerCase().split(/\s+/).filter(Boolean).every(function(w){ return corpus.indexOf(w)!==-1; });
+}
+
+// ── SORT ──────────────────────────────────────────────────────────────────────
+function sortJobs(jobs) {
+  var arr = jobs.slice();
+  if(_sortVal==='newest') arr.sort(function(a,b){ return b.id - a.id; });
+  else if(_sortVal==='deadline') arr.sort(function(a,b){ return (a.deadline?new Date(a.deadline).getTime():9e15)-(b.deadline?new Date(b.deadline).getTime():9e15); });
+  else if(_sortVal==='company') arr.sort(function(a,b){ return (a.company||'').localeCompare(b.company||''); });
+  return arr;
+}
+
+// ── ACTIVE FILTER TAGS ────────────────────────────────────────────────────────
+function renderActiveFilters() {
+  var tags = [];
+  if(cabinClass && cabinClass !== 'all') tags.push({label: cabinClassLabel(cabinClass), clear: function(){ cnSetCabinClass('all'); }});
+  if(langFilter) tags.push({label: langLabel(langFilter), clear: function(){ cnToggleLang(langFilter); }});
+  if(countryFilter) tags.push({label: countryFlag(countryFilter)+' '+countryFilter, clear: function(){ cnSetCountry(''); }});
+  var el = document.getElementById('cnActiveFilters');
+  el.innerHTML = tags.map(function(t,i){
+    return '<span class="cn-af-tag">'+t.label+'<button onclick="cnClearFilter('+i+')">×</button></span>';
+  }).join('');
+  window._activeFilterClears = tags.map(function(t){ return t.clear; });
+}
+function cnClearFilter(i) { window._activeFilterClears[i](); }
+
+// ── RENDER ────────────────────────────────────────────────────────────────────
+function cnRender() {
+  var q = (document.getElementById('cnSearch').value||'').toLowerCase().trim();
+  var csel = document.getElementById('cnCountry');
+  countryFilter = csel ? csel.value : '';
+
+  var filtered = allJobs.filter(function(j){
+    if(tab !== 'all' && j.role !== tab) return false;
+    if(cabinClass !== 'all' && j.cabin_class !== cabinClass) return false;
+    if(langFilter && !(j.languages_required||[]).includes(langFilter)) return false;
+    if(countryFilter && (j.base_country||'').toLowerCase() !== countryFilter.toLowerCase()) return false;
+    if(!_mq(_corpus(j), q)) return false;
+    return true;
+  });
+  filtered = sortJobs(filtered);
+
+  var grid = document.getElementById('cnGrid');
+  var info = document.getElementById('cnResultsInfo');
+
+  if(!filtered.length) {
+    grid.innerHTML = '<div class="cn-no-results">✈ <span class="lang-es">No hay ofertas con estos filtros</span><span class="lang-en">No offers match these filters</span></div>';
+    applyLang();
+    info.textContent = '';
+    renderActiveFilters();
+    resizeParent();
+    return;
+  }
+
+  var countLabel = lang==='es' ? filtered.length+' ofertas' : filtered.length+' offers';
+  if(filtered.length < allJobs.length) countLabel += lang==='es' ? ' de '+allJobs.length : ' of '+allJobs.length;
+  info.textContent = countLabel;
+
+  grid.innerHTML = filtered.map(function(j){ return buildCard(j); }).join('');
+  applyLang();
+  renderActiveFilters();
+  resizeParent();
+}
+
+// ── CARD ──────────────────────────────────────────────────────────────────────
+function buildCard(j) {
+  var title = lang==='es' ? (j.title_es||j.title_en||'') : (j.title_en||j.title_es||'');
+  var isNew = j.created_at && (Date.now()-new Date(j.created_at).getTime()) < 3*24*3600*1000;
+  var dl = j.deadline ? daysUntil(j.deadline) : null;
+
+  // Badges
+  var badges = '';
+  var roleClass = {cabin_crew:'cabin-crew',purser:'purser',senior_cabin_crew:'senior',head_purser:'head-purser'}[j.role]||'';
+  badges += '<span class="badge '+roleClass+'">'+esc(roleLabel(j.role||'cabin_crew'))+'</span>';
+  if(j.cabin_class && j.cabin_class!=='commercial') badges += '<span class="badge">'+esc(cabinClassLabel(j.cabin_class))+'</span>';
+  (j.badges||[]).forEach(function(b){ badges += '<span class="badge">'+esc(b)+'</span>'; });
+  if(isNew) badges += '<span class="badge new-job">🆕 NEW</span>';
+  if(dl!==null && dl>=0 && dl<=5) badges += '<span class="badge" style="color:#ff6b6b;background:rgba(255,80,80,.12);border-color:rgba(255,80,80,.3)">🔥 '+(dl===0?'Hoy':''+dl+'d')+'</span>';
+
+  // Logo
+  var logoHtml = j.logo_url
+    ? '<img src="'+esc(j.logo_url)+'" alt="'+esc(j.company)+'" onerror="this.parentNode.innerHTML=\'<div class=\\\"logo-fallback\\\">\'+(\''+esc((j.company||'').charAt(0))+'\')+\'</div>\'">'
+    : '<div class="logo-fallback">'+esc((j.company||'?').charAt(0))+'</div>';
+
+  // Languages
+  var langs = (j.languages_required||[]).slice(0,4).map(function(l){ return langLabel(l); }).join(' · ');
+
+  // Requirements
+  var reqs = lang==='es' ? (j.requirements_es&&j.requirements_es.length?j.requirements_es:j.requirements||[]) : (j.requirements||[]);
+  var reqsHtml = '';
+  if(reqs.length) {
+    reqsHtml = '<details><summary><span class="lang-es">Requisitos</span><span class="lang-en">Requirements</span></summary><ul class="reqs">'
+      +reqs.slice(0,5).map(function(r){ return '<li>'+esc(r)+'</li>'; }).join('')+'</ul></details>';
+  }
+
+  // Benefits
+  var benefits = lang==='es' ? (j.offer_es&&j.offer_es.length?j.offer_es:j.offer||[]) : (j.offer||[]);
+  var benefitsHtml = '';
+  if(benefits.length) {
+    benefitsHtml = '<details><summary><span class="lang-es">Beneficios</span><span class="lang-en">Benefits</span></summary><ul class="reqs">'
+      +benefits.slice(0,5).map(function(b){ return '<li>'+esc(b)+'</li>'; }).join('')+'</ul></details>';
+  }
+
+  // Deadline
+  var dlHtml = '';
+  if(dl!==null && dl>=0 && dl<=14) {
+    var dlStyle = dl<=3?'color:#ff6b6b':dl<=10?'color:#ffb152':'color:#7dffba';
+    dlHtml = '<div style="font-size:12px;font-weight:700;margin-bottom:8px;'+dlStyle+'">'+(dl===0?'🔥 Closes today':dl===1?'⚠️ Closes tomorrow':'📅 Closes in '+dl+'d — '+j.deadline)+'</div>';
+  }
+
+  var applyBtn = j.apply_url
+    ? '<a class="btn apply" href="'+esc(j.apply_url)+'" target="_blank" rel="noopener" onclick="event.stopPropagation()"><span class="lang-es">Aplicar</span><span class="lang-en">Apply</span></a>'
+    : '';
+  var companyBtn = j.company_url
+    ? '<a class="btn company-btn" href="'+esc(j.company_url)+'" target="_blank" rel="noopener" onclick="event.stopPropagation()"><span class="lang-es">Empresa</span><span class="lang-en">Company</span></a>'
+    : '';
+
+  var shareRow = '<div class="card-share-row">'
+    +'<button class="card-share-btn wa" onclick="shareJobWA('+j.id+',event)">'+WA_SVG+' WhatsApp</button>'
+    +'<button class="card-share-btn tg" onclick="shareJobTG('+j.id+',event)">'+TG_SVG+' Telegram</button>'
+    +'</div>';
+
+  return '<div class="job-card" id="job-'+j.id+'" onclick="cnOpenModal('+j.id+')">'
+    +'<div class="badges">'+badges+'</div>'
+    +'<div class="brand">'+logoHtml+'<div><p class="company">'+esc(j.company)+'</p>'+(j.subtitle?'<p class="subtitle">'+esc(j.subtitle)+(j.base_country?' · '+countryFlag(j.base_country)+' '+esc(j.base_country):'')+'</p>':j.base_country?'<p class="subtitle">'+countryFlag(j.base_country)+' '+esc(j.base_country)+'</p>':'')+'</div></div>'
+    +(langs?'<p style="font-size:11.5px;color:var(--cn-muted);margin-bottom:10px;font-weight:700">🗣 '+esc(langs)+'</p>':'')
+    +'<p class="title">'+esc(title)+'</p>'
+    +dlHtml
+    +reqsHtml+benefitsHtml
+    +(reqsHtml||benefitsHtml?'<div class="card-divider"></div>':'')
+    +'<div class="actions">'+applyBtn+companyBtn+'</div>'
+    +shareRow
+    +'</div>';
+}
+
+// ── MODAL ─────────────────────────────────────────────────────────────────────
+function cnOpenModal(jobId) {
+  var j = allJobs.find(function(x){ return String(x.id) === String(jobId); });
+  if(!j) return;
+  _modalJob = j;
+
+  var logoEl = document.getElementById('cnModalLogo');
+  logoEl.innerHTML = j.logo_url
+    ? '<img class="cn-modal-logo" src="'+esc(j.logo_url)+'" alt="'+esc(j.company)+'" onerror="this.outerHTML=\'<div class=\\\"cn-modal-logo-fallback\\\">\'+\''+esc((j.company||'').charAt(0))+'\'+\'</div>\'">'
+    : '<div class="cn-modal-logo-fallback">'+esc((j.company||'?').charAt(0))+'</div>';
+
+  document.getElementById('cnModalCompany').textContent = j.company||'';
+  var title = lang==='es' ? (j.title_es||j.title_en||'') : (j.title_en||j.title_es||'');
+  document.getElementById('cnModalRole').textContent = title;
+
+  var body = '';
+  // Badges
+  var badges = '';
+  var roleClass = {cabin_crew:'cabin-crew',purser:'purser',senior_cabin_crew:'senior',head_purser:'head-purser'}[j.role]||'';
+  badges += '<span class="badge '+roleClass+'">'+esc(roleLabel(j.role||'cabin_crew'))+'</span>';
+  if(j.cabin_class) badges += '<span class="badge">'+esc(cabinClassLabel(j.cabin_class))+'</span>';
+  (j.badges||[]).forEach(function(b){ badges += '<span class="badge">'+esc(b)+'</span>'; });
+  if(j.created_at && (Date.now()-new Date(j.created_at).getTime()) < 3*24*3600*1000) badges += '<span class="badge new-job">🆕 NEW</span>';
+  body += '<div class="cn-modal-badges">'+badges+'</div>';
+
+  // Meta
+  var metas = [];
+  if(j.subtitle) metas.push('<div class="cn-modal-meta-item">📍 <strong>'+esc(j.subtitle)+'</strong></div>');
+  if(j.base_country) metas.push('<div class="cn-modal-meta-item">'+countryFlag(j.base_country)+' <strong>'+esc(j.base_country)+'</strong></div>');
+  if(j.languages_required&&j.languages_required.length) metas.push('<div class="cn-modal-meta-item">🗣 <strong>'+j.languages_required.map(langLabel).join(' · ')+'</strong></div>');
+  if(j.contract_type && j.contract_type!=='unknown') metas.push('<div class="cn-modal-meta-item">📋 <strong>'+esc(j.contract_type)+'</strong></div>');
+  var age = timeAgo(j.created_at);
+  if(age) metas.push('<div class="cn-modal-meta-item">🕐 '+age+'</div>');
+  if(metas.length) body += '<div class="cn-modal-meta">'+metas.join('')+'</div>';
+
+  // Deadline
+  var dl = j.deadline ? daysUntil(j.deadline) : null;
+  if(dl!==null && dl>=0) {
+    var dlClass=dl<=3?'urgent':dl<=10?'warning':'ok';
+    var dlIcon=dl<=3?'🔥':dl<=10?'⚠️':'📅';
+    var dlText=dl===0?'Closes today!':dl===1?'Closes tomorrow':'Closes in '+dl+' days — '+j.deadline;
+    body += '<div class="cn-modal-deadline '+dlClass+'">'+dlIcon+' '+dlText+'</div>';
+  }
+
+  // Requirements
+  var reqs = lang==='es' ? (j.requirements_es&&j.requirements_es.length?j.requirements_es:j.requirements||[]) : (j.requirements||[]);
+  if(reqs.length) {
+    body += '<div class="cn-modal-section"><p class="cn-modal-section-title"><span class="lang-es">Requisitos</span><span class="lang-en">Requirements</span></p>';
+    body += '<ul class="cn-modal-list">'+reqs.map(function(r){ return '<li>'+esc(r)+'</li>'; }).join('')+'</ul></div>';
+  }
+  // Benefits
+  var benefits = lang==='es' ? (j.offer_es&&j.offer_es.length?j.offer_es:j.offer||[]) : (j.offer||[]);
+  if(benefits.length) {
+    body += '<div class="cn-modal-section"><p class="cn-modal-section-title"><span class="lang-es">Beneficios</span><span class="lang-en">Benefits</span></p>';
+    body += '<ul class="cn-modal-list benefits">'+benefits.map(function(o){ return '<li>'+esc(o)+'</li>'; }).join('')+'</ul></div>';
+  }
+
+  document.getElementById('cnModalBody').innerHTML = body;
+  applyLang();
+
+  // Actions
+  var webUrl = CN_WEB+'/ofertas-tcp?job='+j.id+'&utm_source=jobsboard&utm_medium=modal&utm_campaign=viewoffer';
+  var actions = '';
+  if(j.apply_url) {
+    actions += '<a class="cn-modal-apply" href="'+esc(j.apply_url)+'" target="_blank" rel="noopener">';
+    actions += '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>';
+    actions += '<span class="lang-es">Aplicar ahora</span><span class="lang-en">Apply now</span></a>';
+  }
+  actions += '<a class="cn-modal-web" href="'+webUrl+'" target="_blank" rel="noopener">🔗 <span class="lang-es">Ver en web</span><span class="lang-en">View on web</span></a>';
+  document.getElementById('cnModalActions').innerHTML = actions;
+
+  // Share en modal
+  document.getElementById('cnModalShareRow').innerHTML = '<div class="cn-modal-share-row">'
+    +'<a class="cn-modal-share-btn wa" href="javascript:void(0)" onclick="shareJobWA('+j.id+',event)">'+WA_SVG+' WhatsApp</a>'
+    +'<a class="cn-modal-share-btn tg" href="javascript:void(0)" onclick="shareJobTG('+j.id+',event)">'+TG_SVG+' Telegram</a>'
+    +'</div>';
+
+  applyLang();
+  document.getElementById('cnModalOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function cnCloseModal() {
+  document.getElementById('cnModalOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+  _modalJob = null;
+}
+function cnModalClose(e) {
+  if(e.target === document.getElementById('cnModalOverlay')) cnCloseModal();
+}
+document.addEventListener('keydown', function(e){
+  if(e.key==='Escape') {
+    if(document.getElementById('cnModalOverlay').classList.contains('open')) cnCloseModal();
+    else { var s=document.getElementById('cnSearch'); if(s&&s.value){s.value='';cnRender();} }
+  }
+  if(e.key==='/'&&document.activeElement!==document.getElementById('cnSearch')){
+    e.preventDefault(); var s=document.getElementById('cnSearch'); if(s){s.focus();s.select();}
+  }
+});
+
+// ── SHARE ─────────────────────────────────────────────────────────────────────
+function buildShareText(j, platform) {
+  var title = lang==='es' ? (j.title_es||j.title_en||'') : (j.title_en||j.title_es||'');
+  var utmSrc = platform==='wa' ? 'whatsapp' : 'telegram';
+  var url = CN_WEB+'/ofertas-tcp?job='+j.id+'&utm_source='+utmSrc+'&utm_medium=share&utm_campaign=jobshare';
+  var langs = (j.languages_required||[]).slice(0,2).join('/').toUpperCase();
+  var loc = j.base_country||'';
+  if(lang==='es') {
+    return '✈ *'+title+'*\n🏢 '+j.company+(loc?' · '+loc:'')+(langs?' · 🗣 '+langs:'')+'\n📋 Más info en Cabin Network:\n'+url;
+  }
+  return '✈ *'+title+'*\n🏢 '+j.company+(loc?' · '+loc:'')+(langs?' · 🗣 '+langs:'')+'\n📋 More info at Cabin Network:\n'+url;
+}
+
+function shareJobWA(jobId, event) {
+  if(event) event.stopPropagation();
+  var j = allJobs.find(function(x){ return String(x.id)===String(jobId); });
+  if(!j) return;
+  window.open('https://wa.me/?text='+encodeURIComponent(buildShareText(j,'wa')), '_blank');
+}
+function shareJobTG(jobId, event) {
+  if(event) event.stopPropagation();
+  var j = allJobs.find(function(x){ return String(x.id)===String(jobId); });
+  if(!j) return;
+  var url = CN_WEB+'/ofertas-tcp?job='+j.id+'&utm_source=telegram&utm_medium=share&utm_campaign=jobshare';
+  var title = lang==='es' ? (j.title_es||j.title_en||'') : (j.title_en||j.title_es||'');
+  window.open('https://t.me/share/url?url='+encodeURIComponent(url)+'&text='+encodeURIComponent('✈ '+title+' — '+j.company), '_blank');
+}
+
+function cnShareURL() {
+  var params = new URLSearchParams();
+  if(tab!=='all') params.set('tab',tab);
+  if(cabinClass!=='all') params.set('cc',cabinClass);
+  if(langFilter) params.set('lang_filter',langFilter);
+  if(countryFilter) params.set('country',countryFilter);
+  var q = document.getElementById('cnSearch').value;
+  if(q) params.set('q',q);
+  var url = window.location.href.split('?')[0]+(params.toString()?'?'+params.toString():'');
+  navigator.clipboard.writeText(url).then(function(){
+    showToast(lang==='es'?'✅ Enlace copiado':'✅ Link copied');
+  }).catch(function(){ showToast(url); });
+}
+
+// ── TOAST ─────────────────────────────────────────────────────────────────────
+function showToast(msg, jobId) {
+  var t = document.getElementById('cnToast');
+  t.textContent = msg;
+  t.classList.toggle('clickable', !!jobId);
+  if(jobId) t.onclick = function(){ cnOpenModal(jobId); t.classList.remove('show'); };
+  else t.onclick = null;
+  t.classList.add('show');
+  setTimeout(function(){ t.classList.remove('show'); }, 4000);
+}
+
+// ── FETCH ─────────────────────────────────────────────────────────────────────
+function fetchJobs() {
+  fetch(SB_URL+'/rest/v1/cabin_offers?select=*&order=id.desc', {
+    headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer '+SB_KEY }, cache: 'no-store'
+  })
+  .then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
+  .then(function(data){
+    var prev = window._lastCabinCount||0;
+    allJobs = (data||[]).filter(function(j){
+      if(j.status!=='active') return false;
+      if(j.deadline && j.deadline < today) return false;
+      return true;
+    });
+    window._lastCabinCount = allJobs.length;
+    updateCounts(); buildLangChips(); buildCountryDd(); cnRender();
+    if(prev>0 && allJobs.length>prev) {
+      var newest = allJobs[0];
+      if(newest) showToast('🆕 '+(lang==='es'?'Nueva oferta':'New offer')+': '+newest.company, newest.id);
+    }
+    if(window._pendingJobId){ cnOpenDeepLink(window._pendingJobId); window._pendingJobId=null; }
+  })
+  .catch(function(err){
+    document.getElementById('cnGrid').innerHTML = '<div class="cn-no-results">⚠ Error: '+esc(err.message)+'</div>';
+  });
+}
+
+function fetchJobsNow() {
+  var btn = document.getElementById('cnRefreshBtn');
+  btn.classList.add('loading');
+  btn.innerHTML = '<span class="cn-refresh-spinner"></span>'+(lang==='es'?'Recargando...':'Refreshing...');
+  fetchJobs();
+  setTimeout(function(){
+    btn.classList.remove('loading');
+    btn.innerHTML = '<span class="lang-es">🔄 Recargar</span><span class="lang-en">🔄 Refresh</span>';
+    applyLang();
+  }, 2000);
+}
+
+// ── DEEP LINK ─────────────────────────────────────────────────────────────────
+function cnOpenDeepLink(jobId) {
+  var j = allJobs.find(function(j){ return String(j.id)===String(jobId); });
+  if(!j) return;
+  tab='all';
+  document.querySelectorAll('.cn-tab').forEach(function(b){ b.classList.toggle('active', b.getAttribute('data-tab')==='all'); });
+  cnRender();
+  setTimeout(function(){
+    var el = document.getElementById('job-'+jobId);
+    if(el){ el.scrollIntoView({behavior:'smooth',block:'center'}); el.classList.add('cn-highlight'); setTimeout(function(){ el.classList.remove('cn-highlight'); },3000); }
+    setTimeout(function(){ cnOpenModal(jobId); }, 100);
+  }, 120);
+}
+
+// ── RESIZE PARENT ─────────────────────────────────────────────────────────────
+function resizeParent() {
+  setTimeout(function(){
+    try { window.parent.postMessage({type:'pn-resize',height:document.body.scrollHeight},'*'); } catch(e){}
+  }, 100);
+}
+document.addEventListener('toggle', function(e){ if(e.target&&e.target.tagName==='DETAILS') resizeParent(); }, true);
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+(function(){
+  var p = new URLSearchParams(window.location.search);
+  if(p.get('lang')) lang = p.get('lang');
+  if(p.get('tab'))  tab  = p.get('tab');
+  if(p.get('cc'))   cabinClass = p.get('cc');
+  if(p.get('lang_filter')) langFilter = p.get('lang_filter');
+  if(p.get('country')) countryFilter = p.get('country');
+  if(p.get('job'))  window._pendingJobId = p.get('job');
+  if(p.get('q'))    { var s=document.getElementById('cnSearch'); if(s) s.value=p.get('q'); }
+  window.addEventListener('message', function(ev){
+    if(!ev.data||ev.data.type!=='pn-params') return;
+    var pp = new URLSearchParams(ev.data.search||'');
+    if(pp.get('job')){ if(allJobs.length) cnOpenDeepLink(pp.get('job')); else window._pendingJobId=pp.get('job'); }
+  });
+  try { window.parent.postMessage({type:'pn-ready'},'*'); } catch(e){}
+})();
+
+applyLang();
+cnSetLang(lang);
+cnSetTab(tab);
+fetchJobs();
+
+// Auto-refresh silencioso cada 5 min
+setInterval(function(){ fetchJobs(); }, 5*60*1000);
+</script>
+</body>
+</html>
