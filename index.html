@@ -187,13 +187,10 @@ body.cn-lang-en .reqs-lang-es, .cn-root.cn-lang-en .reqs-lang-es { display: none
 .title { margin: 10px 0 15px; color: #ffffff; font-size: 19px; font-weight: 950; line-height: 1.28; letter-spacing: -.03em; overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 
 /* Collapsibles */
-details { border: 1px solid rgba(255,255,255,.10); border-radius: var(--cn-radius-md); padding: 0; margin-bottom: 10px; max-width: 100%; overflow: hidden; background: rgba(255,255,255,.04); transition: border-color .2s ease; }
-details[open] { border-color: rgba(255,111,168,.28); background: rgba(255,111,168,.05); }
-summary { cursor: pointer; list-style: none; position: relative; min-height: 46px; display: flex; align-items: center; padding: 12px 43px 12px 14px; color: #ffffff; font-weight: 900; font-size: 14px; }
-summary::-webkit-details-marker { display: none; }
-summary::after { content: "+"; position: absolute; right: 13px; top: 50%; transform: translateY(-50%); width: 23px; height: 23px; border-radius: 999px; display: grid; place-items: center; color: #ffffff; background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.16); font-weight: 900; font-size: 15px; }
-details[open] summary::after { content: "×"; background: rgba(255,111,168,.18); border-color: rgba(255,111,168,.36); }
-.reqs { padding: 0 15px 15px 31px; margin: 0; color: var(--cn-soft); font-size: 13.5px; line-height: 1.58; }
+details { display: none; } /* ocultar cualquier details residual */
+.card-inline-section { margin-bottom: 8px; }
+.card-inline-label { font-size: 11px; font-weight: 900; letter-spacing: .6px; text-transform: uppercase; color: var(--cn-muted); margin: 0 0 5px; }
+.reqs { padding: 0 0 0 14px; margin: 0; color: var(--cn-soft); font-size: 13px; line-height: 1.55; }
 .reqs li { margin-bottom: 6px; word-break: break-word; }
 .reqs li:last-child { margin-bottom: 0; }
 
@@ -814,20 +811,27 @@ function buildCard(j) {
   // Languages
   var langs = (j.languages_required||[]).slice(0,4).map(function(l){ return langLabel(l); }).join(' · ');
 
-  // Requirements
-  var reqs = lang==='es' ? (j.requirements_es&&j.requirements_es.length?j.requirements_es:j.requirements||[]) : (j.requirements||[]);
+  // Requirements inline — máx 3
+  var reqs_en = lang==='es' ? (j.requirements_es&&j.requirements_es.length?j.requirements_es:j.requirements||[]) : (j.requirements||[]);
+  var reqs_es_list = (j.requirements_es&&j.requirements_es.length) ? j.requirements_es : (j.requirements||[]);
   var reqsHtml = '';
-  if(reqs.length) {
-    reqsHtml = '<details><summary><span class="lang-es">Requisitos</span><span class="lang-en">Requirements</span></summary><ul class="reqs">'
-      +reqs.slice(0,5).map(function(r){ return '<li>'+esc(r)+'</li>'; }).join('')+'</ul></details>';
+  if((j.requirements||[]).length) {
+    reqsHtml = '<div class="card-inline-section">'
+      +'<p class="card-inline-label"><span class="lang-es">Requisitos</span><span class="lang-en">Requirements</span></p>'
+      +'<ul class="reqs reqs-lang-es">'+reqs_es_list.slice(0,3).map(function(r){return '<li>'+esc(r)+'</li>';}).join('')+'</ul>'
+      +'<ul class="reqs reqs-lang-en">'+(j.requirements||[]).slice(0,3).map(function(r){return '<li>'+esc(r)+'</li>';}).join('')+'</ul>'
+      +'</div>';
   }
 
-  // Benefits
-  var benefits = lang==='es' ? (j.offer_es&&j.offer_es.length?j.offer_es:j.offer||[]) : (j.offer||[]);
+  // Benefits inline — máx 2
+  var offer_es_list = (j.offer_es&&j.offer_es.length) ? j.offer_es : (j.offer||[]);
   var benefitsHtml = '';
-  if(benefits.length) {
-    benefitsHtml = '<details><summary><span class="lang-es">Beneficios</span><span class="lang-en">Benefits</span></summary><ul class="reqs">'
-      +benefits.slice(0,5).map(function(b){ return '<li>'+esc(b)+'</li>'; }).join('')+'</ul></details>';
+  if((j.offer||[]).length) {
+    benefitsHtml = '<div class="card-inline-section">'
+      +'<p class="card-inline-label"><span class="lang-es">Beneficios</span><span class="lang-en">Benefits</span></p>'
+      +'<ul class="reqs reqs-lang-es">'+offer_es_list.slice(0,2).map(function(b){return '<li>'+esc(b)+'</li>';}).join('')+'</ul>'
+      +'<ul class="reqs reqs-lang-en">'+(j.offer||[]).slice(0,2).map(function(b){return '<li>'+esc(b)+'</li>';}).join('')+'</ul>'
+      +'</div>';
   }
 
   // Deadline
@@ -856,7 +860,7 @@ function buildCard(j) {
     +'<p class="title">'+esc(title)+'</p>'
     +dlHtml
     +reqsHtml+benefitsHtml
-    +(reqsHtml||benefitsHtml?'<div class="card-divider"></div>':'')
+    +'<div style="height:1px;background:rgba(255,255,255,.06);margin:10px 0 0"></div>'
     +'<div class="actions">'+applyBtn+companyBtn+'</div>'
     +shareRow
     +'</div>';
