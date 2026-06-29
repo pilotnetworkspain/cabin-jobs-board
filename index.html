@@ -346,11 +346,11 @@ details[open] summary::after { content: "×"; background: rgba(255,111,168,.2); 
 
     <!-- TABS: por tipo de rol TCP -->
     <div class="cn-tabs">
-      <button class="cn-tab active" data-tab="all" onclick="cnSetTab('all')">
+      <button class="cn-tab" data-tab="all" onclick="cnSetTab('all')">
         <span class="lang-es">Todas</span><span class="lang-en">All roles</span>
         <span class="cn-tab-count" id="count-all">(0)</span>
       </button>
-      <button class="cn-tab" data-tab="cabin_crew" onclick="cnSetTab('cabin_crew')">
+      <button class="cn-tab active" data-tab="cabin_crew" onclick="cnSetTab('cabin_crew')">
         <span class="lang-es">TCP / Cabin Crew</span><span class="lang-en">Cabin Crew</span>
         <span class="cn-tab-count" id="count-cabin_crew">(0)</span>
         <span class="cn-tab-new" id="new-cabin_crew"></span>
@@ -499,7 +499,7 @@ var TG_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width=
 // ── STATE ─────────────────────────────────────────────────────────────────────
 var allJobs = [];
 var lang = 'en';
-var tab = 'all';
+var tab = 'cabin_crew';
 var cabinClass = 'all';
 var langFilter = null;
 var countryFilter = '';
