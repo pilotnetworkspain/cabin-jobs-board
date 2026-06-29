@@ -806,9 +806,10 @@ function buildCard(j) {
   if(dl!==null && dl>=0 && dl<=5) badges += '<span class="badge" style="color:#ff6b6b;background:rgba(255,80,80,.12);border-color:rgba(255,80,80,.3)">🔥 '+(dl===0?'Hoy':''+dl+'d')+'</span>';
 
   // Logo
+  var logoFallbackLetter = esc((j.company||'?').charAt(0));
   var logoHtml = j.logo_url
-    ? '<img src="'+esc(j.logo_url)+'" alt="'+esc(j.company)+'" onerror="this.parentNode.innerHTML=\'<div class=\\\"logo-fallback\\\">\'+(\''+esc((j.company||'').charAt(0))+'\')+\'</div>\'">'
-    : '<div class="logo-fallback">'+esc((j.company||'?').charAt(0))+'</div>';
+    ? '<img src="'+esc(j.logo_url)+'" alt="'+esc(j.company)+'" data-fb="'+logoFallbackLetter+'" onload="this.style.display=\'block\'" onerror="var d=document.createElement(\'div\');d.className=\'logo-fallback\';d.textContent=this.getAttribute(\'data-fb\');this.parentNode.replaceChild(d,this)">'
+    : '<div class="logo-fallback">'+logoFallbackLetter+'</div>';
 
   // Languages
   var langs = (j.languages_required||[]).slice(0,4).map(function(l){ return langLabel(l); }).join(' · ');
@@ -868,9 +869,12 @@ function cnOpenModal(jobId) {
   _modalJob = j;
 
   var logoEl = document.getElementById('cnModalLogo');
-  logoEl.innerHTML = j.logo_url
-    ? '<img class="cn-modal-logo" src="'+esc(j.logo_url)+'" alt="'+esc(j.company)+'" onerror="this.outerHTML=\'<div class=\\\"cn-modal-logo-fallback\\\">\'+\''+esc((j.company||'').charAt(0))+'\'+\'</div>\'">'
-    : '<div class="cn-modal-logo-fallback">'+esc((j.company||'?').charAt(0))+'</div>';
+  if(j.logo_url) {
+    var mfb = esc((j.company||'?').charAt(0));
+    logoEl.innerHTML = '<img class="cn-modal-logo" src="'+esc(j.logo_url)+'" alt="'+esc(j.company)+'" data-fb="'+mfb+'" onerror="var d=document.createElement(\'div\');d.className=\'cn-modal-logo-fallback\';d.textContent=this.getAttribute(\'data-fb\');this.parentNode.replaceChild(d,this)">';
+  } else {
+    logoEl.innerHTML = '<div class="cn-modal-logo-fallback">'+esc((j.company||'?').charAt(0))+'</div>';
+  }
 
   document.getElementById('cnModalCompany').textContent = j.company||'';
   var title = lang==='es' ? (j.title_es||j.title_en||'') : (j.title_en||j.title_es||'');
@@ -1102,3 +1106,4 @@ setInterval(function(){ fetchJobs(); }, 5*60*1000);
 </script>
 </body>
 </html>
+
