@@ -188,8 +188,25 @@ body.cn-lang-en .reqs-lang-es, .cn-root.cn-lang-en .reqs-lang-es { display: none
 
 /* Collapsibles */
 details { display: none; } /* ocultar cualquier details residual */
-.card-inline-section { margin-bottom: 8px; }
-.card-inline-label { font-size: 11px; font-weight: 900; letter-spacing: .6px; text-transform: uppercase; color: var(--cn-muted); margin: 0 0 5px; }
+/* ── COLLAPSIBLES RESTAURADOS ── */
+details { display: block; border: 1px solid rgba(255,255,255,.10); border-radius: 13px; margin-bottom: 8px; overflow: hidden; background: rgba(255,255,255,.04); transition: border-color .2s ease; }
+details[open] { border-color: rgba(255,111,168,.28); background: rgba(255,111,168,.05); }
+summary { cursor: pointer; list-style: none; position: relative; min-height: 42px; display: flex; align-items: center; padding: 10px 40px 10px 14px; color: #fff; font-weight: 800; font-size: 13px; user-select: none; }
+summary::-webkit-details-marker { display: none; }
+summary::after { content: "+"; position: absolute; right: 12px; top: 50%; transform: translateY(-50%); width: 22px; height: 22px; border-radius: 999px; display: grid; place-items: center; background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.15); font-weight: 900; font-size: 14px; transition: .2s ease; }
+details[open] summary::after { content: "×"; background: rgba(255,111,168,.2); border-color: rgba(255,111,168,.4); }
+.reqs { padding: 2px 14px 12px 28px; margin: 0; color: var(--cn-soft); font-size: 13px; line-height: 1.58; }
+.reqs li { margin-bottom: 5px; word-break: break-word; }
+/* ── EVENT TAB & CARD ── */
+.cn-tab-event.active { background: linear-gradient(180deg, #fff, #ffeab0) !important; color: #02040a !important; border-color: rgba(255,255,255,.75) !important; box-shadow: 0 12px 26px rgba(255,200,80,.2) !important; }
+.cn-tab-event:not(.active):hover { background: rgba(255,200,80,.12); }
+.job-card.cat-event { border-color: rgba(255,200,80,.35); background: linear-gradient(180deg, rgba(255,200,80,.08), rgba(255,200,80,.02)), rgba(14,6,18,.75); }
+.job-card.cat-event:hover { border-color: rgba(255,200,80,.65); box-shadow: 0 14px 42px rgba(255,200,80,.12); }
+.job-card.cat-event details[open] { border-color: rgba(255,200,80,.28); background: rgba(255,200,80,.05); }
+.job-card.cat-event details[open] summary::after { background: rgba(255,200,80,.2); border-color: rgba(255,200,80,.4); }
+.event-meta { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+.event-meta-item { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 700; color: #ffd060; background: rgba(255,200,80,.1); border: 1px solid rgba(255,200,80,.25); border-radius: 8px; padding: 4px 10px; }
+.badge.event-tag { color: #ffd060 !important; background: rgba(255,200,80,.14) !important; border-color: rgba(255,200,80,.4) !important; }
 .reqs { padding: 0 0 0 14px; margin: 0; color: var(--cn-soft); font-size: 13px; line-height: 1.55; }
 .reqs li { margin-bottom: 6px; word-break: break-word; }
 .reqs li:last-child { margin-bottom: 0; }
@@ -352,6 +369,11 @@ details { display: none; } /* ocultar cualquier details residual */
         Head Purser
         <span class="cn-tab-count" id="count-head_purser">(0)</span>
         <span class="cn-tab-new" id="new-head_purser"></span>
+      </button>
+      <button class="cn-tab cn-tab-event" data-tab="event" onclick="cnSetTab('event')">
+        🗓 <span class="lang-es">Eventos</span><span class="lang-en">Events</span>
+        <span class="cn-tab-count" id="count-event">(0)</span>
+        <span class="cn-tab-new" id="new-event"></span>
       </button>
     </div>
 
@@ -694,14 +716,16 @@ document.addEventListener('click', function(e){
 
 // ── COUNTS ────────────────────────────────────────────────────────────────────
 function updateCounts() {
-  var roles = ['cabin_crew','purser','senior_cabin_crew','head_purser'];
+  var roles = ['cabin_crew','purser','senior_cabin_crew','head_purser','event'];
   var c = {all: allJobs.length};
   var newC = {};
   var weekAgo = Date.now() - 7*24*3600*1000;
   roles.forEach(function(r){ c[r]=0; newC[r]=0; });
   allJobs.forEach(function(j){
-    if(c[j.role]!==undefined) c[j.role]++;
-    if(j.created_at && new Date(j.created_at).getTime() > weekAgo && newC[j.role]!==undefined) newC[j.role]++;
+    // Para eventos usar category en lugar de role
+    var key = j.category === 'event' ? 'event' : j.role;
+    if(c[key]!==undefined) c[key]++;
+    if(j.created_at && new Date(j.created_at).getTime() > weekAgo && newC[key]!==undefined) newC[key]++;
   });
   Object.keys(c).forEach(function(k){
     var el = document.getElementById('count-'+k);
@@ -756,7 +780,12 @@ function cnRender() {
   countryFilter = csel ? csel.value : '';
 
   var filtered = allJobs.filter(function(j){
-    if(tab !== 'all' && j.role !== tab) return false;
+    if(tab === 'event') {
+      if(j.category !== 'event') return false;
+    } else if(tab !== 'all') {
+      if(j.role !== tab) return false;
+      if(j.category === 'event') return false; // eventos no aparecen en tabs de rol
+    }
     if(cabinClass !== 'all' && j.cabin_class !== cabinClass) return false;
     if(langFilter && !(j.languages_required||[]).includes(langFilter)) return false;
     if(countryFilter && (j.base_country||'').toLowerCase() !== countryFilter.toLowerCase()) return false;
@@ -811,59 +840,71 @@ function buildCard(j) {
   // Languages
   var langs = (j.languages_required||[]).slice(0,4).map(function(l){ return langLabel(l); }).join(' · ');
 
-  // Requirements inline — máx 3
-  var reqs_en = lang==='es' ? (j.requirements_es&&j.requirements_es.length?j.requirements_es:j.requirements||[]) : (j.requirements||[]);
-  var reqs_es_list = (j.requirements_es&&j.requirements_es.length) ? j.requirements_es : (j.requirements||[]);
-  var reqsHtml = '';
-  if((j.requirements||[]).length) {
-    reqsHtml = '<div class="card-inline-section">'
-      +'<p class="card-inline-label"><span class="lang-es">Requisitos</span><span class="lang-en">Requirements</span></p>'
-      +'<ul class="reqs reqs-lang-es">'+reqs_es_list.slice(0,3).map(function(r){return '<li>'+esc(r)+'</li>';}).join('')+'</ul>'
-      +'<ul class="reqs reqs-lang-en">'+(j.requirements||[]).slice(0,3).map(function(r){return '<li>'+esc(r)+'</li>';}).join('')+'</ul>'
-      +'</div>';
+  var isEventCard = (j.category === 'event');
+  var catClass = isEventCard ? 'cat-event' : '';
+
+  // Event meta
+  var eventMetaHtml = '';
+  if(isEventCard && (j.event_date || j.event_location || j.event_type)) {
+    var evDate = j.event_date ? '<div class="event-meta-item">📅 '+esc(j.event_date)+'<\/div>' : '';
+    var evLoc  = j.event_location ? '<div class="event-meta-item">📍 '+esc(j.event_location)+'<\/div>' : '';
+    var evType = j.event_type ? '<div class="event-meta-item">'+(j.event_type==='online'?'💻 Online':j.event_type==='hybrid'?'🔀 Híbrido':'📍 Presencial')+'<\/div>' : '';
+    eventMetaHtml = '<div class="event-meta">'+evDate+evLoc+evType+'<\/div>';
   }
 
-  // Benefits inline — máx 2
-  var offer_es_list = (j.offer_es&&j.offer_es.length) ? j.offer_es : (j.offer||[]);
+  // Collapsibles
+  var reqs_en_list = j.requirements || [];
+  var reqs_es_list = (j.requirements_es&&j.requirements_es.length) ? j.requirements_es : reqs_en_list;
+  var reqsHtml = '';
+  if(reqs_en_list.length) {
+    reqsHtml = '<details onclick="event.stopPropagation()">'
+      +'<summary><span class="lang-es">Requisitos<\/span><span class="lang-en">Requirements<\/span><\/summary>'
+      +'<ul class="reqs reqs-lang-es">'+reqs_es_list.slice(0,5).map(function(r){return '<li>'+esc(r)+'<\/li>';}).join('')+'<\/ul>'
+      +'<ul class="reqs reqs-lang-en">'+reqs_en_list.slice(0,5).map(function(r){return '<li>'+esc(r)+'<\/li>';}).join('')+'<\/ul>'
+      +'<\/details>';
+  }
+  var offer_en_list = j.offer || [];
+  var offer_es_list = (j.offer_es&&j.offer_es.length) ? j.offer_es : offer_en_list;
   var benefitsHtml = '';
-  if((j.offer||[]).length) {
-    benefitsHtml = '<div class="card-inline-section">'
-      +'<p class="card-inline-label"><span class="lang-es">Beneficios</span><span class="lang-en">Benefits</span></p>'
-      +'<ul class="reqs reqs-lang-es">'+offer_es_list.slice(0,2).map(function(b){return '<li>'+esc(b)+'</li>';}).join('')+'</ul>'
-      +'<ul class="reqs reqs-lang-en">'+(j.offer||[]).slice(0,2).map(function(b){return '<li>'+esc(b)+'</li>';}).join('')+'</ul>'
-      +'</div>';
+  if(offer_en_list.length) {
+    benefitsHtml = '<details onclick="event.stopPropagation()">'
+      +'<summary><span class="lang-es">Beneficios<\/span><span class="lang-en">Benefits<\/span><\/summary>'
+      +'<ul class="reqs reqs-lang-es">'+offer_es_list.slice(0,5).map(function(b){return '<li>'+esc(b)+'<\/li>';}).join('')+'<\/ul>'
+      +'<ul class="reqs reqs-lang-en">'+offer_en_list.slice(0,5).map(function(b){return '<li>'+esc(b)+'<\/li>';}).join('')+'<\/ul>'
+      +'<\/details>';
   }
 
   // Deadline
   var dlHtml = '';
   if(dl!==null && dl>=0 && dl<=14) {
     var dlStyle = dl<=3?'color:#ff6b6b':dl<=10?'color:#ffb152':'color:#7dffba';
-    dlHtml = '<div style="font-size:12px;font-weight:700;margin-bottom:8px;'+dlStyle+'">'+(dl===0?'🔥 Closes today':dl===1?'⚠️ Closes tomorrow':'📅 Closes in '+dl+'d — '+j.deadline)+'</div>';
+    dlHtml = '<div style="font-size:12px;font-weight:700;margin-bottom:8px;'+dlStyle+'">'+(dl===0?'🔥 Closes today':dl===1?'⚠️ Closes tomorrow':'📅 Closes in '+dl+'d — '+j.deadline)+'<\/div>';
   }
 
-  var applyBtn = j.apply_url
-    ? '<a class="btn apply" href="'+esc(j.apply_url)+'" target="_blank" rel="noopener" onclick="event.stopPropagation()"><span class="lang-es">Aplicar</span><span class="lang-en">Apply</span></a>'
-    : '';
-  var companyBtn = j.company_url
-    ? '<a class="btn company-btn" href="'+esc(j.company_url)+'" target="_blank" rel="noopener" onclick="event.stopPropagation()"><span class="lang-es">Empresa</span><span class="lang-en">Company</span></a>'
-    : '';
-
-  var shareRow = '<div class="card-share-row">'
-    +'<button class="card-share-btn wa" onclick="shareJobWA('+j.id+',event)">'+WA_SVG+' WhatsApp</button>'
-    +'<button class="card-share-btn tg" onclick="shareJobTG('+j.id+',event)">'+TG_SVG+' Telegram</button>'
-    +'</div>';
-
-  return '<div class="job-card" id="job-'+j.id+'" onclick="cnOpenModal('+j.id+')">'
-    +'<div class="badges">'+badges+'</div>'
-    +'<div class="brand">'+logoHtml+'<div><p class="company">'+esc(j.company)+'</p>'+(j.subtitle?'<p class="subtitle">'+esc(j.subtitle)+(j.base_country?' · '+countryFlag(j.base_country)+' '+esc(j.base_country):'')+'</p>':j.base_country?'<p class="subtitle">'+countryFlag(j.base_country)+' '+esc(j.base_country)+'</p>':'')+'</div></div>'
-    +(langs?'<p style="font-size:11.5px;color:var(--cn-muted);margin-bottom:10px;font-weight:700">🗣 '+esc(langs)+'</p>':'')
-    +'<p class="title">'+esc(title)+'</p>'
-    +dlHtml
+  return '<div class="job-card'+(catClass?' '+catClass:'')+'" id="job-'+j.id+'" role="article">'
+    +'<div class="badges">'
+    +(isEventCard?'<span class="badge event-tag">🗓 <span class="lang-es">Evento<\/span><span class="lang-en">Roadshow<\/span><\/span>':'')
+    +'<span class="badge '+roleClass+'">'+esc(roleLabel(j.role||'cabin_crew'))+'<\/span>'
+    +(j.cabin_class&&j.cabin_class!=='commercial'?'<span class="badge">'+esc(cabinClassLabel(j.cabin_class))+'<\/span>':'')
+    +(j.badges||[]).map(function(b){return '<span class="badge">'+esc(b)+'<\/span>';}).join('')
+    +(isNew?'<span class="badge new-job">🆕 NEW<\/span>':'')
+    +(dl!==null&&dl>=0&&dl<=5?'<span class="badge" style="color:#ff6b6b;background:rgba(255,80,80,.12);border-color:rgba(255,80,80,.3)">🔥 '+(dl===0?'Hoy':''+dl+'d')+'<\/span>':'')
+    +'<\/div>'
+    +'<div class="brand">'+logoHtml+'<div><p class="company">'+esc(j.company)+'<\/p>'+(j.subtitle?'<p class="subtitle">'+esc(j.subtitle)+(j.base_country?' · '+countryFlag(j.base_country)+' '+esc(j.base_country):'')+'<\/p>':j.base_country?'<p class="subtitle">'+countryFlag(j.base_country)+' '+esc(j.base_country)+'<\/p>':'')+'<\/div><\/div>'
+    +(langs?'<p style="font-size:11.5px;color:var(--cn-muted);margin-bottom:10px;font-weight:700">🗣 '+esc(langs)+'<\/p>':'')
+    +'<p class="title">'+esc(title)+'<\/p>'
+    +eventMetaHtml+dlHtml
     +reqsHtml+benefitsHtml
-    +'<div style="height:1px;background:rgba(255,255,255,.06);margin:10px 0 0"></div>'
-    +'<div class="actions">'+applyBtn+companyBtn+'</div>'
-    +shareRow
-    +'</div>';
+    +'<div style="height:1px;background:rgba(255,255,255,.06);margin:10px 0 0"><\/div>'
+    +'<div class="actions">'
+    +(j.apply_url?'<a class="btn apply" href="'+esc(j.apply_url)+'" target="_blank" rel="noopener" onclick="event.stopPropagation()"><span class="lang-es">Aplicar<\/span><span class="lang-en">Apply<\/span><\/a>':'')
+    +(j.company_url?'<a class="btn company-btn" href="'+esc(j.company_url)+'" target="_blank" rel="noopener" onclick="event.stopPropagation()"><span class="lang-es">Empresa<\/span><span class="lang-en">Company<\/span><\/a>':'')
+    +'<\/div>'
+    +'<div class="card-share-row">'
+    +'<button class="card-share-btn wa" onclick="event.stopPropagation();shareJobWA('+j.id+',event)">'+WA_SVG+' WhatsApp<\/button>'
+    +'<button class="card-share-btn tg" onclick="event.stopPropagation();shareJobTG('+j.id+',event)">'+TG_SVG+' Telegram<\/button>'
+    +'<\/div>'
+    +'<\/div>';
 }
 
 // ── MODAL ─────────────────────────────────────────────────────────────────────
