@@ -971,7 +971,7 @@ function cnOpenModal(jobId) {
   applyLang();
 
   // Actions
-  var webUrl = CN_WEB+'/ofertas-tcp?job='+j.id+'&utm_source=jobsboard&utm_medium=modal&utm_campaign=viewoffer';
+  var webUrl = CN_WEB+'/cabin-crew-jobs?job='+j.id+'&utm_source=jobsboard&utm_medium=modal&utm_campaign=viewoffer';
   var actions = '';
   if(j.apply_url) {
     actions += '<a class="cn-modal-apply" href="'+esc(j.apply_url)+'" target="_blank" rel="noopener">';
@@ -1014,7 +1014,7 @@ document.addEventListener('keydown', function(e){
 function buildShareText(j, platform) {
   var title = lang==='es' ? (j.title_es||j.title_en||'') : (j.title_en||j.title_es||'');
   var utmSrc = platform==='wa' ? 'whatsapp' : 'telegram';
-  var url = CN_WEB+'/ofertas-tcp?job='+j.id+'&utm_source='+utmSrc+'&utm_medium=share&utm_campaign=jobshare';
+  var url = CN_WEB+'/cabin-crew-jobs?job='+j.id+'&utm_source='+utmSrc+'&utm_medium=share&utm_campaign=jobshare';
   var langs = (j.languages_required||[]).slice(0,2).join('/').toUpperCase();
   var loc = j.base_country||'';
   if(lang==='es') {
@@ -1033,7 +1033,7 @@ function shareJobTG(jobId, event) {
   if(event) event.stopPropagation();
   var j = allJobs.find(function(x){ return String(x.id)===String(jobId); });
   if(!j) return;
-  var url = CN_WEB+'/ofertas-tcp?job='+j.id+'&utm_source=telegram&utm_medium=share&utm_campaign=jobshare';
+  var url = CN_WEB+'/cabin-crew-jobs?job='+j.id+'&utm_source=telegram&utm_medium=share&utm_campaign=jobshare';
   var title = lang==='es' ? (j.title_es||j.title_en||'') : (j.title_en||j.title_es||'');
   window.open('https://t.me/share/url?url='+encodeURIComponent(url)+'&text='+encodeURIComponent('✈ '+title+' — '+j.company), '_blank');
 }
