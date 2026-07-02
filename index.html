@@ -1105,7 +1105,8 @@ function fetchJobs() {
     });
     window._lastCabinCount = allJobs.length;
     updateCounts(); buildLangChips(); buildCountryDd(); cnRender();
-    if(prev>0 && allJobs.length>prev) {
+    // Solo mostrar toast de nueva oferta si NO estamos en deep link
+    if(prev>0 && allJobs.length>prev && !window._pendingJobId) {
       var newest = allJobs[0];
       if(newest) showToast('🆕 '+(lang==='es'?'Nueva oferta':'New offer')+': '+newest.company, newest.id);
     }
@@ -1133,29 +1134,14 @@ function cnOpenDeepLink(jobId, fromTelegram) {
   var j = allJobs.find(function(x){ return String(x.id)===String(jobId); });
   if(!j) return;
 
-  // Tab correcto
   cnSetTab(j.category==='event' ? 'event' : 'cabin_crew');
 
-  var tries = 0;
-  var t = setInterval(function(){
+  function highlight() {
     var el = document.getElementById('job-'+jobId);
-    if(!el) { if(++tries > 25) clearInterval(t); return; }
-    clearInterval(t);
+    if(!el) return false;
 
     // Abrir detalles
     el.querySelectorAll('details').forEach(function(d){ d.open = true; });
-
-    // Decirle al padre cuánto bajar para centrar esta card
-    var rect = el.getBoundingClientRect();
-    var cardTopInIframe = rect.top + window.scrollY;
-    var cardH = rect.height;
-    try {
-      window.parent.postMessage({
-        type: 'cn-scroll-to',
-        cardTop: cardTopInIframe,
-        cardHeight: cardH
-      }, '*');
-    } catch(e){}
 
     // Badge Telegram
     if(fromTelegram && !el.querySelector('.cn-tg-badge')){
@@ -1165,7 +1151,22 @@ function cnOpenDeepLink(jobId, fromTelegram) {
       el.insertBefore(badge, el.firstChild);
     }
 
-    // Animación de brillo — pulso 3 veces, sin overlay, sin modal
+    // Notificar al padre dónde está la card (varias veces con delays)
+    function notifyParent() {
+      var rect = el.getBoundingClientRect();
+      try {
+        window.parent.postMessage({
+          type: 'cn-scroll-to',
+          cardTop: rect.top + window.scrollY,
+          cardHeight: rect.height
+        }, '*');
+      } catch(e){}
+    }
+    notifyParent();
+    setTimeout(notifyParent, 400);
+    setTimeout(notifyParent, 900);
+
+    // Glow brillante — sin modal, sin overlay
     el.classList.remove('cn-spotlight','cn-spotlight-hold','cn-spotlight-out');
     void el.offsetWidth;
     el.classList.add('cn-spotlight');
@@ -1177,9 +1178,18 @@ function cnOpenDeepLink(jobId, fromTelegram) {
         el.classList.add('cn-spotlight-out');
         setTimeout(function(){ el.classList.remove('cn-spotlight-out'); }, 700);
       }, 3000);
-    }, 400);
+    }, 500);
 
-  }, 120);
+    return true;
+  }
+
+  // Retry hasta que el DOM renderice la card
+  if(!highlight()) {
+    var tries = 0;
+    var t = setInterval(function(){
+      if(highlight() || ++tries > 30) clearInterval(t);
+    }, 100);
+  }
 }
 
 // ── RESIZE PARENT ─────────────────────────────────────────────────────────────
