@@ -1110,7 +1110,7 @@ function fetchJobs() {
       var newest = allJobs[0];
       if(newest) showToast('🆕 '+(lang==='es'?'Nueva oferta':'New offer')+': '+newest.company, newest.id);
     }
-    if(window._pendingJobId){ cnOpenDeepLink(window._pendingJobId, window._deepLinkSource==='telegram'); window._pendingJobId=null; }
+    if(window._pendingJobId){ cnOpenDeepLink(window._pendingJobId); window._pendingJobId=null; }
   })
   .catch(function(err){
     document.getElementById('cnGrid').innerHTML = '<div class="cn-no-results">⚠ Error: '+esc(err.message)+'</div>';
@@ -1130,43 +1130,23 @@ function fetchJobsNow() {
 }
 
 // ── DEEP LINK ─────────────────────────────────────────────────────────────────
-function cnOpenDeepLink(jobId, fromTelegram) {
+function cnOpenDeepLink(jobId) {
   var j = allJobs.find(function(x){ return String(x.id)===String(jobId); });
   if(!j) return;
 
   cnSetTab(j.category==='event' ? 'event' : 'cabin_crew');
 
-  function highlight() {
+  function go() {
     var el = document.getElementById('job-'+jobId);
     if(!el) return false;
+
+    // Scroll nativo dentro del board (standalone sin iframe)
+    el.scrollIntoView({behavior:'smooth', block:'center'});
 
     // Abrir detalles
     el.querySelectorAll('details').forEach(function(d){ d.open = true; });
 
-    // Badge Telegram
-    if(fromTelegram && !el.querySelector('.cn-tg-badge')){
-      var badge = document.createElement('div');
-      badge.className = 'cn-tg-badge';
-      badge.innerHTML = '✈ Desde Telegram';
-      el.insertBefore(badge, el.firstChild);
-    }
-
-    // Notificar al padre dónde está la card (varias veces con delays)
-    function notifyParent() {
-      var rect = el.getBoundingClientRect();
-      try {
-        window.parent.postMessage({
-          type: 'cn-scroll-to',
-          cardTop: rect.top + window.scrollY,
-          cardHeight: rect.height
-        }, '*');
-      } catch(e){}
-    }
-    notifyParent();
-    setTimeout(notifyParent, 400);
-    setTimeout(notifyParent, 900);
-
-    // Glow brillante — sin modal, sin overlay
+    // Glow pulsante — 3 pulsos, solo borde brillante, nada más
     el.classList.remove('cn-spotlight','cn-spotlight-hold','cn-spotlight-out');
     void el.offsetWidth;
     el.classList.add('cn-spotlight');
@@ -1179,16 +1159,11 @@ function cnOpenDeepLink(jobId, fromTelegram) {
         setTimeout(function(){ el.classList.remove('cn-spotlight-out'); }, 700);
       }, 3000);
     }, 500);
-
     return true;
   }
 
-  // Retry hasta que el DOM renderice la card
-  if(!highlight()) {
-    var tries = 0;
-    var t = setInterval(function(){
-      if(highlight() || ++tries > 30) clearInterval(t);
-    }, 100);
+  if(!go()){
+    var n = 0, t = setInterval(function(){ if(go()||++n>30) clearInterval(t); }, 100);
   }
 }
 
@@ -1211,18 +1186,19 @@ document.addEventListener('toggle', function(e){ if(e.target&&e.target.tagName==
   if(p.get('job'))  window._pendingJobId = p.get('job');
   if(p.get('q'))    { var s=document.getElementById('cnSearch'); if(s) s.value=p.get('q'); }
 
-  // Leer job desde el hash (#job=90&utm_source=telegram) — Webador no toca el hash
+  // Hash fallback (#job=90) por si acaso
   var hash = window.location.hash.replace('#','');
-  if(hash) {
-    var hp = new URLSearchParams(hash);
-    if(hp.get('job')) window._pendingJobId = hp.get('job');
-    var utm_src = hp.get('utm_source')||p.get('utm_source')||'';
-    var utm_med = hp.get('utm_medium')||p.get('utm_medium')||'';
-    window._deepLinkSource = (utm_med==='bot'||utm_src==='telegram') ? 'telegram' : '';
-  } else {
-    var utm_src = p.get('utm_source')||''; var utm_med = p.get('utm_medium')||'';
-    window._deepLinkSource = (utm_med==='bot'||utm_src==='telegram'||utm_med==='share') ? 'telegram' : '';
-  }
+  if(hash){ var hp=new URLSearchParams(hash); if(hp.get('job')) window._pendingJobId=hp.get('job'); }
+
+  window.addEventListener('message', function(ev){
+    if(!ev.data||ev.data.type!=='pn-params') return;
+    var pp=new URLSearchParams(ev.data.search||'');
+    if(pp.get('job')){
+      if(allJobs.length) cnOpenDeepLink(pp.get('job'));
+      else window._pendingJobId=pp.get('job');
+    }
+  });
+  try { window.parent.postMessage({type:'pn-ready'},'*'); } catch(e){}
   window.addEventListener('message', function(ev){
     if(!ev.data||ev.data.type!=='pn-params') return;
     var pp = new URLSearchParams(ev.data.search||'');
