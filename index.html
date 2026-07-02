@@ -1198,8 +1198,19 @@ document.addEventListener('toggle', function(e){ if(e.target&&e.target.tagName==
   if(p.get('country')) countryFilter = p.get('country');
   if(p.get('job'))  window._pendingJobId = p.get('job');
   if(p.get('q'))    { var s=document.getElementById('cnSearch'); if(s) s.value=p.get('q'); }
-  var utm_src = p.get('utm_source')||''; var utm_med = p.get('utm_medium')||'';
-  window._deepLinkSource = (utm_med==='bot'||utm_src==='telegram'||utm_med==='share') ? 'telegram' : '';
+
+  // Leer job desde el hash (#job=90&utm_source=telegram) — Webador no toca el hash
+  var hash = window.location.hash.replace('#','');
+  if(hash) {
+    var hp = new URLSearchParams(hash);
+    if(hp.get('job')) window._pendingJobId = hp.get('job');
+    var utm_src = hp.get('utm_source')||p.get('utm_source')||'';
+    var utm_med = hp.get('utm_medium')||p.get('utm_medium')||'';
+    window._deepLinkSource = (utm_med==='bot'||utm_src==='telegram') ? 'telegram' : '';
+  } else {
+    var utm_src = p.get('utm_source')||''; var utm_med = p.get('utm_medium')||'';
+    window._deepLinkSource = (utm_med==='bot'||utm_src==='telegram'||utm_med==='share') ? 'telegram' : '';
+  }
   window.addEventListener('message', function(ev){
     if(!ev.data||ev.data.type!=='pn-params') return;
     var pp = new URLSearchParams(ev.data.search||'');
