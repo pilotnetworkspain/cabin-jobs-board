@@ -291,36 +291,28 @@ details[open] summary::after { content: "×"; background: rgba(255,111,168,.2); 
 .cn-highlight { animation: cnHighlight 3s ease forwards !important; }
 @keyframes cnHighlight { 0%,100%{box-shadow:var(--cn-shadow-soft)} 30%,70%{box-shadow:0 0 0 3px rgba(255,111,168,.7),var(--cn-shadow)} }
 
-/* ── DEEP LINK SPOTLIGHT — cabin board ── */
+/* ── DEEP LINK SPOTLIGHT — cabin, sin overlay ── */
 @keyframes cnSpotIn {
-  0%   { transform: scale(.94) translateY(16px); opacity: 0; box-shadow: none; }
-  40%  { transform: scale(1.025) translateY(-4px); opacity: 1;
-         box-shadow: 0 0 0 3px rgba(208,109,255,.9), 0 0 60px 20px rgba(208,109,255,.3), 0 24px 64px rgba(0,0,0,.6); }
-  70%  { transform: scale(1.01) translateY(-1px);
-         box-shadow: 0 0 0 2px rgba(208,109,255,.7), 0 0 40px 12px rgba(208,109,255,.18), 0 16px 48px rgba(0,0,0,.5); }
-  100% { transform: scale(1) translateY(0);
-         box-shadow: 0 0 0 2px rgba(208,109,255,.5), 0 0 24px 6px rgba(208,109,255,.1), 0 8px 32px rgba(0,0,0,.4); }
+  0%   { box-shadow: 0 0 0 0 rgba(208,109,255,0); }
+  25%  { box-shadow: 0 0 0 4px rgba(208,109,255,1), 0 0 40px 12px rgba(208,109,255,.45); }
+  60%  { box-shadow: 0 0 0 3px rgba(208,109,255,.8), 0 0 28px 8px rgba(208,109,255,.3); }
+  100% { box-shadow: 0 0 0 2px rgba(208,109,255,.5), 0 0 16px 4px rgba(208,109,255,.15); }
 }
-@keyframes cnSpotOut { from { box-shadow: 0 0 0 2px rgba(208,109,255,.5), 0 0 24px 6px rgba(208,109,255,.1); } to { box-shadow: var(--cn-shadow-soft); } }
-@keyframes cnOverlayIn  { from { opacity:0; } to { opacity:1; } }
-@keyframes cnOverlayOut { from { opacity:1; } to { opacity:0; } }
-
-.cn-card.cn-spotlight      { animation: cnSpotIn .55s cubic-bezier(.22,1,.36,1) forwards !important; position:relative; z-index:10; }
-.cn-card.cn-spotlight-hold { box-shadow: 0 0 0 2px rgba(208,109,255,.5), 0 0 24px 6px rgba(208,109,255,.1), 0 8px 32px rgba(0,0,0,.4) !important; position:relative; z-index:10; }
-.cn-card.cn-spotlight-out  { animation: cnSpotOut .8s ease forwards !important; }
-
-#cn-spotlight-overlay {
-  position:fixed; inset:0; z-index:9;
-  background: rgba(6,10,20,.72);
-  backdrop-filter: blur(2px);
-  pointer-events: none;
-  animation: cnOverlayIn .35s ease forwards;
+@keyframes cnSpotHold {
+  0%,100% { box-shadow: 0 0 0 2px rgba(208,109,255,.5), 0 0 16px 4px rgba(208,109,255,.15); }
+  50%     { box-shadow: 0 0 0 3px rgba(208,109,255,.75), 0 0 28px 8px rgba(208,109,255,.28); }
 }
-#cn-spotlight-overlay.out { animation: cnOverlayOut .6s ease forwards; }
+@keyframes cnSpotOut {
+  from { box-shadow: 0 0 0 2px rgba(208,109,255,.5), 0 0 16px 4px rgba(208,109,255,.15); }
+  to   { box-shadow: var(--cn-shadow-soft); }
+}
+.cn-card.cn-spotlight      { animation: cnSpotIn .4s ease forwards !important; }
+.cn-card.cn-spotlight-hold { animation: cnSpotHold 1.8s ease-in-out 2 forwards !important; }
+.cn-card.cn-spotlight-out  { animation: cnSpotOut .6s ease forwards !important; }
 
 .cn-tg-badge {
   display: inline-flex; align-items: center; gap: 5px;
-  background: rgba(208,109,255,.15); border: 1px solid rgba(208,109,255,.35);
+  background: rgba(208,109,255,.12); border: 1px solid rgba(208,109,255,.3);
   color: #d06dff; border-radius: 20px; font-size: 10px; font-weight: 800;
   letter-spacing: .5px; padding: 3px 9px; margin-bottom: 8px;
   text-transform: uppercase;
@@ -1141,7 +1133,7 @@ function cnOpenDeepLink(jobId) {
   var j = allJobs.find(function(x){ return String(x.id)===String(jobId); });
   if(!j) return;
 
-  // Cambiar al tab correcto según categoría
+  // Tab correcto según categoría
   var targetTab = j.category==='event' ? 'event' : 'cabin_crew';
   cnSetTab(targetTab);
 
@@ -1149,51 +1141,33 @@ function cnOpenDeepLink(jobId) {
     var el = document.getElementById('job-'+jobId);
     if(!el) return;
 
-    // Badge "Desde Telegram" si viene del bot
-    var fromTg = window._deepLinkSource === 'telegram';
-    if(fromTg && !el.querySelector('.cn-tg-badge')){
+    // Badge Telegram
+    if(window._deepLinkSource==='telegram' && !el.querySelector('.cn-tg-badge')){
       var badge = document.createElement('div');
       badge.className = 'cn-tg-badge';
       badge.innerHTML = '✈ Desde Telegram';
       el.insertBefore(badge, el.firstChild);
     }
 
-    // Overlay oscuro
-    var overlay = document.createElement('div');
-    overlay.id = 'cn-spotlight-overlay';
-    document.body.appendChild(overlay);
-
-    // Scroll y animación
+    // Scroll al centro de la card
     el.scrollIntoView({behavior:'smooth', block:'center'});
-    el.classList.add('cn-spotlight');
 
     // Auto-expand collapsibles
     el.querySelectorAll('details').forEach(function(d){ d.open = true; });
 
-    // Mantener glow
+    // Glow puro — sin overlay
+    el.classList.add('cn-spotlight');
     setTimeout(function(){
       el.classList.remove('cn-spotlight');
       el.classList.add('cn-spotlight-hold');
-    }, 600);
+      setTimeout(function(){
+        el.classList.remove('cn-spotlight-hold');
+        el.classList.add('cn-spotlight-out');
+        setTimeout(function(){ el.classList.remove('cn-spotlight-out'); }, 650);
+      }, 3600);
+    }, 420);
 
-    // Quitar tras 4.5s
-    setTimeout(function(){
-      overlay.classList.add('out');
-      setTimeout(function(){ if(overlay.parentNode) overlay.parentNode.removeChild(overlay); }, 650);
-      el.classList.remove('cn-spotlight-hold');
-      el.classList.add('cn-spotlight-out');
-      setTimeout(function(){ el.classList.remove('cn-spotlight-out'); }, 850);
-    }, 4500);
-
-    // Click en overlay → quita spotlight
-    overlay.addEventListener('click', function(){
-      overlay.classList.add('out');
-      setTimeout(function(){ if(overlay.parentNode) overlay.parentNode.removeChild(overlay); }, 650);
-      el.classList.remove('cn-spotlight-hold');
-      el.classList.add('cn-spotlight-out');
-      setTimeout(function(){ el.classList.remove('cn-spotlight-out'); }, 850);
-    });
-  }, 160);
+  }, 180);
 }
 
 // ── RESIZE PARENT ─────────────────────────────────────────────────────────────
