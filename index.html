@@ -195,8 +195,8 @@ summary { cursor: pointer; list-style: none; position: relative; min-height: 42p
 summary::-webkit-details-marker { display: none; }
 summary::after { content: "+"; position: absolute; right: 12px; top: 50%; transform: translateY(-50%); width: 22px; height: 22px; border-radius: 999px; display: grid; place-items: center; background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.15); font-weight: 900; font-size: 14px; transition: .2s ease; }
 details[open] summary::after { content: "×"; background: rgba(255,111,168,.2); border-color: rgba(255,111,168,.4); }
-.reqs { padding: 2px 14px 12px 28px; margin: 0; color: var(--cn-soft); font-size: 13px; line-height: 1.58; }
-.reqs li { margin-bottom: 5px; word-break: break-word; }
+.reqs { padding: 4px 8px 10px 20px; margin: 0; color: var(--cn-soft); font-size: 13px; line-height: 1.58; list-style: disc; }
+.reqs li { margin-bottom: 5px; word-break: break-word; padding-left: 2px; }
 /* ── EVENT TAB & CARD ── */
 .cn-tab-event.active { background: linear-gradient(180deg, #fff, #ffeab0) !important; color: #02040a !important; border-color: rgba(255,255,255,.75) !important; box-shadow: 0 12px 26px rgba(255,200,80,.2) !important; }
 .cn-tab-event:not(.active):hover { background: rgba(255,200,80,.12); }
@@ -207,8 +207,6 @@ details[open] summary::after { content: "×"; background: rgba(255,111,168,.2); 
 .event-meta { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
 .event-meta-item { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 700; color: #ffd060; background: rgba(255,200,80,.1); border: 1px solid rgba(255,200,80,.25); border-radius: 8px; padding: 4px 10px; }
 .badge.event-tag { color: #ffd060 !important; background: rgba(255,200,80,.14) !important; border-color: rgba(255,200,80,.4) !important; }
-.reqs { padding: 0 0 0 14px; margin: 0; color: var(--cn-soft); font-size: 13px; line-height: 1.55; }
-.reqs li { margin-bottom: 6px; word-break: break-word; }
 .reqs li:last-child { margin-bottom: 0; }
 
 /* Card separador */
