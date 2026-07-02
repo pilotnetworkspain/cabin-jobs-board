@@ -1133,7 +1133,7 @@ function cnOpenDeepLink(jobId, fromTelegram) {
   var j = allJobs.find(function(x){ return String(x.id)===String(jobId); });
   if(!j) return;
 
-  // Tab correcto
+  // Cambiar tab correcto
   var targetTab = j.category==='event' ? 'event' : 'cabin_crew';
   cnSetTab(targetTab);
 
@@ -1152,14 +1152,12 @@ function cnOpenDeepLink(jobId, fromTelegram) {
     // Abrir detalles
     el.querySelectorAll('details').forEach(function(d){ d.open = true; });
 
-    // Scroll — usar scrollIntoView en el iframe y también notificar al padre
+    // Scroll limpio
     el.scrollIntoView({behavior:'smooth', block:'center'});
-    // Notificar al padre para que haga scroll también (por si está en iframe)
-    try { window.parent.postMessage({type:'pn-scroll-to', offsetTop: el.getBoundingClientRect().top + window.scrollY}, '*'); } catch(e){}
 
-    // Pulso brillante — solo glow, sin overlay
+    // Pulso de color — sin overlay, sin modal
     el.classList.remove('cn-spotlight','cn-spotlight-hold','cn-spotlight-out');
-    void el.offsetWidth; // forzar reflow
+    void el.offsetWidth;
     el.classList.add('cn-spotlight');
     setTimeout(function(){
       el.classList.remove('cn-spotlight');
@@ -1173,11 +1171,11 @@ function cnOpenDeepLink(jobId, fromTelegram) {
     return true;
   }
 
-  // Intentar inmediatamente, luego con retry si el DOM no está listo
+  // Retry hasta que el DOM tenga la card
   if(!doHighlight()) {
     var tries = 0;
     var t = setInterval(function(){
-      if(doHighlight() || ++tries > 15) clearInterval(t);
+      if(doHighlight() || ++tries > 20) clearInterval(t);
     }, 150);
   }
 }
