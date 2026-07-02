@@ -195,8 +195,8 @@ summary { cursor: pointer; list-style: none; position: relative; min-height: 42p
 summary::-webkit-details-marker { display: none; }
 summary::after { content: "+"; position: absolute; right: 12px; top: 50%; transform: translateY(-50%); width: 22px; height: 22px; border-radius: 999px; display: grid; place-items: center; background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.15); font-weight: 900; font-size: 14px; transition: .2s ease; }
 details[open] summary::after { content: "×"; background: rgba(255,111,168,.2); border-color: rgba(255,111,168,.4); }
-.reqs { padding: 4px 8px 10px 20px; margin: 0; color: var(--cn-soft); font-size: 13px; line-height: 1.58; list-style: disc; }
-.reqs li { margin-bottom: 5px; word-break: break-word; padding-left: 2px; }
+.reqs { padding: 4px 14px 10px 32px; margin: 0; color: var(--cn-soft); font-size: 13px; line-height: 1.58; list-style: disc; }
+.reqs li { margin-bottom: 5px; word-break: break-word; padding-left: 0; }
 /* ── EVENT TAB & CARD ── */
 .cn-tab-event.active { background: linear-gradient(180deg, #fff, #ffeab0) !important; color: #02040a !important; border-color: rgba(255,255,255,.75) !important; box-shadow: 0 12px 26px rgba(255,200,80,.2) !important; }
 .cn-tab-event:not(.active):hover { background: rgba(255,200,80,.12); }
