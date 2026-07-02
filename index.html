@@ -293,26 +293,26 @@ details[open] summary::after { content: "×"; background: rgba(255,111,168,.2); 
 
 /* ── DEEP LINK SPOTLIGHT — cabin, sin overlay ── */
 @keyframes cnSpotIn {
-  0%   { box-shadow: 0 0 0 0 rgba(208,109,255,0); }
-  25%  { box-shadow: 0 0 0 4px rgba(208,109,255,1), 0 0 40px 12px rgba(208,109,255,.45); }
-  60%  { box-shadow: 0 0 0 3px rgba(208,109,255,.8), 0 0 28px 8px rgba(208,109,255,.3); }
-  100% { box-shadow: 0 0 0 2px rgba(208,109,255,.5), 0 0 16px 4px rgba(208,109,255,.15); }
+  0%   { box-shadow: 0 0 0 0 rgba(208,109,255,0), 0 0 0 0 rgba(208,109,255,0); }
+  20%  { box-shadow: 0 0 0 5px rgba(208,109,255,1), 0 0 50px 20px rgba(208,109,255,.5); }
+  50%  { box-shadow: 0 0 0 4px rgba(208,109,255,.9), 0 0 35px 14px rgba(208,109,255,.35); }
+  80%  { box-shadow: 0 0 0 3px rgba(208,109,255,.7), 0 0 25px 8px rgba(208,109,255,.2); }
+  100% { box-shadow: 0 0 0 2px rgba(208,109,255,.5), 0 0 16px 5px rgba(208,109,255,.12); }
 }
 @keyframes cnSpotHold {
-  0%,100% { box-shadow: 0 0 0 2px rgba(208,109,255,.5), 0 0 16px 4px rgba(208,109,255,.15); }
-  50%     { box-shadow: 0 0 0 3px rgba(208,109,255,.75), 0 0 28px 8px rgba(208,109,255,.28); }
+  0%,100% { box-shadow: 0 0 0 2px rgba(208,109,255,.5), 0 0 16px 5px rgba(208,109,255,.12); }
+  50%     { box-shadow: 0 0 0 4px rgba(208,109,255,.85), 0 0 32px 12px rgba(208,109,255,.3); }
 }
 @keyframes cnSpotOut {
-  from { box-shadow: 0 0 0 2px rgba(208,109,255,.5), 0 0 16px 4px rgba(208,109,255,.15); }
-  to   { box-shadow: var(--cn-shadow-soft); }
+  to { box-shadow: var(--cn-shadow-soft); }
 }
-.cn-card.cn-spotlight      { animation: cnSpotIn .4s ease forwards !important; }
-.cn-card.cn-spotlight-hold { animation: cnSpotHold 1.8s ease-in-out 2 forwards !important; }
-.cn-card.cn-spotlight-out  { animation: cnSpotOut .6s ease forwards !important; }
+.cn-card.cn-spotlight      { animation: cnSpotIn .5s ease forwards !important; }
+.cn-card.cn-spotlight-hold { animation: cnSpotHold 1.2s ease-in-out 2.5 forwards !important; }
+.cn-card.cn-spotlight-out  { animation: cnSpotOut .7s ease forwards !important; }
 
 .cn-tg-badge {
   display: inline-flex; align-items: center; gap: 5px;
-  background: rgba(208,109,255,.12); border: 1px solid rgba(208,109,255,.3);
+  background: rgba(208,109,255,.15); border: 1px solid rgba(208,109,255,.35);
   color: #d06dff; border-radius: 20px; font-size: 10px; font-weight: 800;
   letter-spacing: .5px; padding: 3px 9px; margin-bottom: 8px;
   text-transform: uppercase;
@@ -1133,15 +1133,31 @@ function cnOpenDeepLink(jobId, fromTelegram) {
   var j = allJobs.find(function(x){ return String(x.id)===String(jobId); });
   if(!j) return;
 
-  // Cambiar tab correcto
-  var targetTab = j.category==='event' ? 'event' : 'cabin_crew';
-  cnSetTab(targetTab);
+  // Tab correcto
+  cnSetTab(j.category==='event' ? 'event' : 'cabin_crew');
 
-  function doHighlight() {
+  var tries = 0;
+  var t = setInterval(function(){
     var el = document.getElementById('job-'+jobId);
-    if(!el) return false;
+    if(!el) { if(++tries > 25) clearInterval(t); return; }
+    clearInterval(t);
 
-    // Badge solo desde Telegram
+    // Abrir detalles
+    el.querySelectorAll('details').forEach(function(d){ d.open = true; });
+
+    // Decirle al padre cuánto bajar para centrar esta card
+    var rect = el.getBoundingClientRect();
+    var cardTopInIframe = rect.top + window.scrollY;
+    var cardH = rect.height;
+    try {
+      window.parent.postMessage({
+        type: 'cn-scroll-to',
+        cardTop: cardTopInIframe,
+        cardHeight: cardH
+      }, '*');
+    } catch(e){}
+
+    // Badge Telegram
     if(fromTelegram && !el.querySelector('.cn-tg-badge')){
       var badge = document.createElement('div');
       badge.className = 'cn-tg-badge';
@@ -1149,13 +1165,7 @@ function cnOpenDeepLink(jobId, fromTelegram) {
       el.insertBefore(badge, el.firstChild);
     }
 
-    // Abrir detalles
-    el.querySelectorAll('details').forEach(function(d){ d.open = true; });
-
-    // Scroll limpio
-    el.scrollIntoView({behavior:'smooth', block:'center'});
-
-    // Pulso de color — sin overlay, sin modal
+    // Animación de brillo — pulso 3 veces, sin overlay, sin modal
     el.classList.remove('cn-spotlight','cn-spotlight-hold','cn-spotlight-out');
     void el.offsetWidth;
     el.classList.add('cn-spotlight');
@@ -1165,19 +1175,11 @@ function cnOpenDeepLink(jobId, fromTelegram) {
       setTimeout(function(){
         el.classList.remove('cn-spotlight-hold');
         el.classList.add('cn-spotlight-out');
-        setTimeout(function(){ el.classList.remove('cn-spotlight-out'); }, 650);
-      }, 3600);
-    }, 420);
-    return true;
-  }
+        setTimeout(function(){ el.classList.remove('cn-spotlight-out'); }, 700);
+      }, 3000);
+    }, 400);
 
-  // Retry hasta que el DOM tenga la card
-  if(!doHighlight()) {
-    var tries = 0;
-    var t = setInterval(function(){
-      if(doHighlight() || ++tries > 20) clearInterval(t);
-    }, 150);
-  }
+  }, 120);
 }
 
 // ── RESIZE PARENT ─────────────────────────────────────────────────────────────
